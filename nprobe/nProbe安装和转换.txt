@@ -1,0 +1,229 @@
+
+PCAP数据来源：
+
+https://www.netresec.com/?page=MACCDC
+
+
+
+
+1. 将*.PCAP文件转换为*.netflows二进制文件
+
+http://packages.ntop.org/apt-stable/
+
+
+wget http://apt-stable.ntop.org/16.04/all/apt-ntop-stable.deb
+dpkg -i apt-ntop-stable.deb 
+
+
+apt-get clean all
+apt-get update
+apt-get install pfring nprobe ntopng ntopng-data n2disk cento nbox	#按照界面提示设置
+
+
+nprobe -h
+
+
+#转换
+nprobe -i /usr/src/nprobe_dir/pcap_data/pubg-ios-qjcj4.pcapng -P /usr/src/nprobe_dir/netflow_data/ -D t		#转为文本格式的netflow
+nprobe -i /usr/src/nprobe_dir/pcap_data/pubg-ios-qjcj4.pcapng -P /usr/src/nprobe_dir/netflow_data/ -D b		#转为二进制格式的netflow
+
+
+#转换
+nprobe -i /usr/src/nprobe_dir/pcap_data/pubg-ios-cjzc.pcapng -P /usr/src/nprobe_dir/netflow_data/ -D t
+nprobe -i /usr/src/nprobe_dir/pcap_data/pubg-ios-cjzc.pcapng -P /usr/src/nprobe_dir/netflow_data/ -D b
+
+
+
+
+hexdump -C xx 001.netflows
+
+
+Ubuntu系统下安装linux版本的UE二进制查看工具
+Ubuntu系统下安装linux版本的KolourPaint画图软件
+
+
+格式比对：
+https://blog.csdn.net/mei922/article/details/4333206
+
+
+
+2. 不同压缩算法的标准测试数据集
+
+
+
+nprobe -i /usr/src/nprobe_dir/pcap_data/pubg-ios-qjcj4.pcapng -P /usr/src/nprobe_dir/netflow_data/ -D b
+
+
+nprobe -i /usr/src/nprobe_dir/pcap_data/pubg-ios-cjzc5.pcapng -P /usr/src/nprobe_dir/netflow_data/ -D b
+
+
+nprobe -i /usr/src/nprobe_dir/pcap_data/pubg-ios-cjzc4.pcapng -P /usr/src/nprobe_dir/netflow_data/ -D b
+
+
+nprobe -i /usr/src/nprobe_dir/pcap_data/pubg-ios-qjcj5.pcapng -P /usr/src/nprobe_dir/netflow_data/ -D b
+
+
+nprobe -i /usr/src/nprobe_dir/pcap_data/pubg-ios-qjcj2.pcapng -P /usr/src/nprobe_dir/netflow_data/ -D b
+
+
+
+
+
+nprobe -i /usr/src/nprobe_dir/pcap_data/pubg-ios-cjzc3.pcapng -P /usr/src/nprobe_dir/netflow_data/ -D b
+
+
+nprobe -i /usr/src/nprobe_dir/pcap_data/pubg-ios-qjcj3.pcapng -P /usr/src/nprobe_dir/netflow_data/ -D b
+
+
+nprobe -i /usr/src/nprobe_dir/pcap_data/pubg-ios-qjcj.pcapng -P /usr/src/nprobe_dir/netflow_data/ -D b
+
+
+nprobe -i /usr/src/nprobe_dir/pcap_data/pubg-ios-cjzc2.pcapng -P /usr/src/nprobe_dir/netflow_data/ -D b
+
+
+nprobe -i /usr/src/nprobe_dir/pcap_data/pubg-ios-cjzc.pcapng -P /usr/src/nprobe_dir/netflow_data/ -D b
+
+
+
+//
+nprobe -i /usr/src/nprobe_dir/pcap_data/ftp_5G_send_test1.pcapng -P /usr/src/nprobe_dir/netflow_data/ -D b
+nprobe -i /usr/src/nprobe_dir/pcap_data/ftp_5G_seg.pcap -P /usr/src/nprobe_dir/netflow_data/ -D b
+
+
+nprobe -i /usr/src/nprobe_dir/pcap_data/maccdc2012_00008.pcap -P /usr/src/nprobe_dir/netflow_data/ -D b -m 80000
+nprobe -i /usr/src/nprobe_dir/pcap_data/maccdc2012_00008.pcap -P /usr/src/nprobe_dir/netflow_data/ -D t -m 80000
+
+nprobe -i /usr/src/nprobe_dir/pcap_data/maccdc2012_00016.pcap -P /usr/src/nprobe_dir/netflow_data/ -D b -m 80000
+nprobe -i /usr/src/nprobe_dir/pcap_data/maccdc2012_00016.pcap -P /usr/src/nprobe_dir/netflow_data/ -D t -m 80000
+
+
+nprobe -i /usr/src/nprobe_dir/pcap_data/wrccdc.2017-03-24.010117000000000.pcap -P /usr/src/nprobe_dir/netflow_data/ -D t -m 80000 -V 9
+nprobe -i /usr/src/nprobe_dir/pcap_data/wrccdc.2017-03-24.010117000000000.pcap -P /usr/src/nprobe_dir/netflow_data/ -D b -m 80000 -V 9
+
+
+
+
+//
+nprobe -i /usr/src/nprobe_dir/pcap_data/wrccdc.2017-03-24.010117000000000.pcap -P /usr/src/nprobe_dir/netflow_data/ -D t -m 80000
+
+
+nprobe -i /usr/src/nprobe_dir/pcap_data/wrccdc.2017-03-25.123749000000000.pcap -P /usr/src/nprobe_dir/netflow_data/ -D t -m 80000
+
+
+nprobe -i /usr/src/nprobe_dir/pcap_data/wrccdc.2017-03-25.125026000000000.pcap -P /usr/src/nprobe_dir/netflow_data/ -D t -m 180000
+
+
+nprobe -i /usr/src/nprobe_dir/pcap_data/wrccdc.2018-03-23.010232000000000.pcap -P /usr/src/nprobe_dir/netflow_data/ -D t -m 180000
+
+
+
+
+
+
+
+
+nprobe -i /usr/src/nprobe_dir/pcap_data/ftp_5G_seg.pcap -P /usr/src/nprobe_dir/netflow_data/ -D b
+
+
+
+nprobe -i /usr/src/nprobe_dir/pcap_data/pubg-ios-cjzc.pcapng -P /usr/src/nprobe_dir/netflow_data/ -D b
+
+
+
+
+https://www.jianshu.com/p/f98b003639a5
+
+
+nprobe -V 9 -T "%SAMPLING_INTERVAL %IN_BYTES %IN_PKTS %IPV4_SRC_ADDR %IPV4_DST_ADDR %IPV4_NEXT_HOP %IPV6_SRC_ADDR %IPV6_DST_ADDR %IPV6_NEXT_HOP %L4_SRC_PORT %L4_DST_PORT %SRC_VLAN %DOT1Q_SRC_VLAN %SRC_TOS %TCP_FLAGS %PROTOCOL %IP_PROTOCOL_VERSION %DIRECTION %FLOW_START_MILLISECONDS %FLOW_END_MILLISECONDS %INPUT_SNMP %OUTPUT_SNMP %IN_SRC_MAC %OUT_DST_MAC %ICMP_TYPE %BIFLOW_DIRECTION %L7_PROTO_NAME" -i /usr/src/nprobe_dir/pcap_data/wrccdc.2017-03-24.010117000000000.pcap -P /usr/src/nprobe_dir/netflow_data/ -D t -m 80000
+ 
+
+
+
+
+3. ================================================输出netflow v5格式（默认）================================================
+pcap数据来源
+https://www.netresec.com/?page=MACCDC
+
+//
+nprobe -i /usr/src/nprobe_dir/pcap_data/wrccdc.2017-03-24.010117000000000.pcap -P /usr/src/nprobe_dir/netflow_data/ -D t -m 80000
+
+默认输出的字段如下：
+IPV4_SRC_ADDR|IPV4_DST_ADDR|INPUT_SNMP|OUTPUT_SNMP|IN_PKTS|IN_BYTES|FIRST_SWITCHED|LAST_SWITCHED|L4_SRC_PORT|L4_DST_PORT|TCP_FLAGS|PROTOCOL|SRC_TOS|SRC_AS|DST_AS
+
+二进制文件的头部有28个字节，每个头部最大封装30条流。
+
+
+
+
+4. ================================================输出netflow v9格式（自定义）================================================
+
+pcap数据来源
+https://www.netresec.com/?page=MACCDC
+
+
+
+
+sample_test1
+//
+nprobe -V 9 -T "%IPV4_SRC_ADDR %IPV4_DST_ADDR %L4_SRC_PORT %L4_DST_PORT %PROTOCOL %IN_PKTS %IN_BYTES %FLOW_START_MILLISECONDS %FLOW_END_MILLISECONDS %SRC_TOS %TCP_FLAGS" -i /usr/src/nprobe_dir/pcap_data/wrccdc.2017-03-24.010117000000000.pcap -P /usr/src/nprobe_dir/netflow_data/ -D t -m 80000
+//
+nprobe -V 9 -T "%IPV4_SRC_ADDR %IPV4_DST_ADDR %L4_SRC_PORT %L4_DST_PORT %PROTOCOL %IN_PKTS %IN_BYTES %FLOW_START_MILLISECONDS %FLOW_END_MILLISECONDS %SRC_TOS %TCP_FLAGS" -i /usr/src/nprobe_dir/pcap_data/wrccdc.2017-03-24.010117000000000.pcap -P /usr/src/nprobe_dir/netflow_data/ -D b -m 80000
+
+
+
+
+
+sample_test2
+//
+nprobe -V 9 -T "%IPV4_SRC_ADDR %IPV4_DST_ADDR %L4_SRC_PORT %L4_DST_PORT %PROTOCOL %IN_PKTS %IN_BYTES %FLOW_START_MILLISECONDS %FLOW_END_MILLISECONDS %SRC_TOS %TCP_FLAGS" -i /usr/src/nprobe_dir/pcap_data/wrccdc.2017-03-25.123749000000000.pcap -P /usr/src/nprobe_dir/netflow_data/ -D t -m 80000
+//
+nprobe -V 9 -T "%IPV4_SRC_ADDR %IPV4_DST_ADDR %L4_SRC_PORT %L4_DST_PORT %PROTOCOL %IN_PKTS %IN_BYTES %FLOW_START_MILLISECONDS %FLOW_END_MILLISECONDS %SRC_TOS %TCP_FLAGS" -i /usr/src/nprobe_dir/pcap_data/wrccdc.2017-03-25.123749000000000.pcap -P /usr/src/nprobe_dir/netflow_data/ -D b -m 80000
+
+
+sample_test3
+//
+nprobe -V 9 -T "%IPV4_SRC_ADDR %IPV4_DST_ADDR %L4_SRC_PORT %L4_DST_PORT %PROTOCOL %IN_PKTS %IN_BYTES %FLOW_START_MILLISECONDS %FLOW_END_MILLISECONDS %SRC_TOS %TCP_FLAGS" -i /usr/src/nprobe_dir/pcap_data/wrccdc.2017-03-25.125026000000000.pcap -P /usr/src/nprobe_dir/netflow_data/ -D t -m 80000
+//
+nprobe -V 9 -T "%IPV4_SRC_ADDR %IPV4_DST_ADDR %L4_SRC_PORT %L4_DST_PORT %PROTOCOL %IN_PKTS %IN_BYTES %FLOW_START_MILLISECONDS %FLOW_END_MILLISECONDS %SRC_TOS %TCP_FLAGS" -i /usr/src/nprobe_dir/pcap_data/wrccdc.2017-03-25.125026000000000.pcap -P /usr/src/nprobe_dir/netflow_data/ -D b -m 80000
+
+
+
+sample_test4
+//
+nprobe -V 9 -T "%IPV4_SRC_ADDR %IPV4_DST_ADDR %L4_SRC_PORT %L4_DST_PORT %PROTOCOL %IN_PKTS %IN_BYTES %FLOW_START_MILLISECONDS %FLOW_END_MILLISECONDS %SRC_TOS %TCP_FLAGS" -i /usr/src/nprobe_dir/pcap_data/wrccdc.2018-03-23.010232000000000.pcap -P /usr/src/nprobe_dir/netflow_data/ -D t -m 80000
+//
+nprobe -V 9 -T "%IPV4_SRC_ADDR %IPV4_DST_ADDR %L4_SRC_PORT %L4_DST_PORT %PROTOCOL %IN_PKTS %IN_BYTES %FLOW_START_MILLISECONDS %FLOW_END_MILLISECONDS %SRC_TOS %TCP_FLAGS" -i /usr/src/nprobe_dir/pcap_data/wrccdc.2018-03-23.010232000000000.pcap -P /usr/src/nprobe_dir/netflow_data/ -D b -m 80000
+
+
+
+
+二进制文件的头部有41个字节，每个头部最大封装xx条流。
+
+
+
+-i /usr/src/nprobe_dir/pcap_data/wrccdc.2017-03-24.010117000000000.pcap  ###test_sample1
+-i /usr/src/nprobe_dir/pcap_data/wrccdc.2017-03-25.123749000000000.pcap  ###test_sample2
+-i /usr/src/nprobe_dir/pcap_data/wrccdc.2017-03-25.125026000000000.pcap  ###test_sample3
+-i /usr/src/nprobe_dir/pcap_data/wrccdc.2018-03-23.010232000000000.pcap  ###test_sample4
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,77 @@
+	//Validate file
+
+
+		char* ptr = in;
+	char* ptr_end = in + in_len;
+	int i;
+	int j;
+
+	char* temp_ptr[NETFLOW_V5_CELL_LEN];
+	for (i = 0; i < NETFLOW_V5_CELL_LEN; i++)
+	{
+		temp_ptr[i] = out_buffer_table[i];
+	}
+
+	while (ptr < ptr_end)
+	{
+		for (i = 0; i < NETFLOW_V5_CELL_LEN; i++)
+		{
+			for (j = 0; j < field_width[i]; j++)
+			{
+				*(temp_ptr[i] + j) = *ptr++;
+			}	
+			out_size_arr[i] += field_width[i];
+			temp_ptr[i] += field_width[i];
+		}
+	}
+
+
+				o_filename = malloc(MAX_PATHNAME_LEN);
+			if (!o_filename)
+			{
+				printf("Allocate output_filename_table[%d] memory error!\n", i);
+				return -1;
+			}
+			output_filename_table[i] = o_filename;
+			memset(o_filename, 0, MAX_PATHNAME_LEN);
+			sprintf(o_filename, "%s_column%.2d", argv[1], column_count);
+
+			if (extract_netflow_v5_field_column(input_filename, o_filename))
+			{
+				printf("extract_netflow_v5_field_column error!\n");
+				return -1;
+			}
+
+
+
+	#if 0	
+	
+	char* output_filename_table[V5_FIELD_NUM];
+	memset(input_filename, 0, MAX_PATHNAME_LEN);
+	int len = strlen(argv[1]);
+	memcpy(input_filename, argv[1], len);
+	
+
+	int i;
+	char* ptr;
+	for (i = 0; i < V5_FIELD_NUM; i++)
+	{
+		ptr = malloc(MAX_PATHNAME_LEN);
+		if (!ptr)
+		{
+			printf("Allocate memory error!\n");
+			return -1;
+		}
+		output_filename_table[i] = ptr;
+		memset(ptr, 0, MAX_PATHNAME_LEN);
+		sprintf(ptr, "%s_Field%.2d", input_filename, i);
+	}
+
+	//
+	extract_netflow_v5_field(input_filename, output_filename_table);
+#endif
+
+
+
+
+
