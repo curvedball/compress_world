@@ -8,6 +8,9 @@
 
 #define UDP_V5_MAGIC 0x31343634
 
+
+#pragma pack(1)
+
 typedef struct _V5_head
 {
 	U32 magic;

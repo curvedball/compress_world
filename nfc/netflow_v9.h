@@ -10,6 +10,8 @@
 #define UDP_V9_MAGIC 0x30383834
 
 
+#pragma pack(1)
+
 typedef struct _V9_head
 {
 	U32 magic;
@@ -24,9 +26,7 @@ typedef struct _V9_head
 	U16 template_field_num;
 } V9_head, *PV9_head;
 
-
 #define NETFLOW_V9_HEAD_LEN		(sizeof(V9_head))
-
 
 
 
@@ -50,6 +50,13 @@ typedef struct _V9_body
 
 
 #define NETFLOW_V9_CELL_LEN		sizeof(V9_body)
+
+
+#define UDP_V9_MAGIC2 0x30313630
+#define UDP_V9_MAGIC2_BLOCK_LEN		232
+
+#define UDP_V9_MAGIC3 0x30393132
+#define UDP_V9_MAGIC3_BLOCK_LEN		916
 
 
 
