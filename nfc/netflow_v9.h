@@ -12,6 +12,7 @@
 
 #pragma pack(1)
 
+
 typedef struct _V9_head
 {
 	U32 magic;
@@ -62,6 +63,8 @@ typedef struct _V9_body
 
 #define V9_FIELD_NUM 11
 
+
+//39 columns
 int v9_field_width[V9_FIELD_NUM] = 
 {
 	4, 4, 1, 1, 1, 2, 4, 2, 4, 8, 8

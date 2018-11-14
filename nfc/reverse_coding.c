@@ -10,7 +10,7 @@
 
 
 
-int reverse_coding_netflow_v5_field_u32(char* in1, char* in2, int nRecords, char* control_buffer, int* pcontrol_size, char* out1, char* out2, int* pout2_size)
+int reverse_coding_netflow_field_u32(char* in1, char* in2, int nRecords, char* control_buffer, int* pcontrol_size, char* out1, char* out2, int* pout2_size)
 {
 	DbgPrint("reverse_coding_netflow_v5_field_u32=====nRecords: %d nBytes: %d\n", nRecords, nRecords * 4);
 	
@@ -76,7 +76,7 @@ int reverse_coding_netflow_v5_field_u32(char* in1, char* in2, int nRecords, char
 	return 0;
 }
 
-int reverse_coding_netflow_v5_field_u16(char* in1, char* in2, int nRecords, char* control_buffer, int* pcontrol_size, char* out1, char* out2, int* pout2_size)
+int reverse_coding_netflow_field_u16(char* in1, char* in2, int nRecords, char* control_buffer, int* pcontrol_size, char* out1, char* out2, int* pout2_size)
 {
 	DbgPrint("reverse_coding_netflow_v5_field_u16=====nRecords: %d nBytes: %d\n", nRecords, nRecords * 2);
 	
@@ -147,7 +147,7 @@ int reverse_coding_netflow_v5_field_u16(char* in1, char* in2, int nRecords, char
 
 
 
-int reverse_coding_netflow_v5_field_file(char* input_filename1, char* input_filename2, char* output_filename1, char* output_filename2, int width, char* output_filename_control)
+int reverse_coding_netflow_field_file(char* input_filename1, char* input_filename2, char* output_filename1, char* output_filename2, int width, char* output_filename_control)
 {
     if (UTIL_isDirectory(input_filename1))
     {
@@ -242,7 +242,7 @@ int reverse_coding_netflow_v5_field_file(char* input_filename1, char* input_file
 	int output_size2;
 	if (width == 4)
 	{
-		if (reverse_coding_netflow_v5_field_u32(input_buffer1, input_buffer2, nRecords, control_buffer, &nControlSize, output_buffer1, output_buffer2, &output_size2))
+		if (reverse_coding_netflow_field_u32(input_buffer1, input_buffer2, nRecords, control_buffer, &nControlSize, output_buffer1, output_buffer2, &output_size2))
 		{
 			printf("reverse_coding_netflow_v5_field_u32 error!\n");		
 			return -1;
@@ -250,7 +250,7 @@ int reverse_coding_netflow_v5_field_file(char* input_filename1, char* input_file
 	}
 	else if (width == 2)
 	{
-		if (reverse_coding_netflow_v5_field_u16(input_buffer1, input_buffer2, nRecords, control_buffer, &nControlSize, output_buffer1, output_buffer2, &output_size2))
+		if (reverse_coding_netflow_field_u16(input_buffer1, input_buffer2, nRecords, control_buffer, &nControlSize, output_buffer1, output_buffer2, &output_size2))
 		{
 			printf("reverse_coding_netflow_v5_field_u16 error!\n");		
 			return -1;
@@ -353,7 +353,7 @@ int main(int argc , char* argv[])
 
 
 	//
-	if (reverse_coding_netflow_v5_field_file(input_filename1, input_filename2, output_filename1, output_filename2, width, output_filename_control))
+	if (reverse_coding_netflow_field_file(input_filename1, input_filename2, output_filename1, output_filename2, width, output_filename_control))
 	{
 		return -1;
 	}

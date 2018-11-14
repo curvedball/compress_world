@@ -262,7 +262,7 @@ int extract_netflow_v9_record(char* input_filename, char* output_filename)
 	int outSize;
 	if (parse_netflow_v9_data(input_buffer, srcSize, output_buffer, &outSize))
 	{
-		printf("parse_netflow_data v9 error!\n");		
+		printf("parse_netflow_data v9 error!\n");
 		return -1;
 	}
 
@@ -320,7 +320,7 @@ int main(int argc , char* argv[])
 	}
 	else if (netflow_version == 9)
 	{
-		extract_netflow_v9_record(input_filename, output_filename);				
+		extract_netflow_v9_record(input_filename, output_filename);			
 	}
 	else
 	{

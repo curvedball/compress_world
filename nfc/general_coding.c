@@ -9,8 +9,26 @@
 #include "netflow_v5.h"
 
 
+int need_to_delete_original_file()
+{
+	printf("Do you want to remove the original column_files? (y/N)");
+	int ch = getchar();
+	if ((ch != 'Y') && (ch != 'y'))
+    {
+        return 0;
+    }
 
-int general_coding_file(char* input_filename, char* generic_compress_program_name)
+    /* flush rest of input line */
+    while ((ch != EOF) && (ch != '\n'))
+    {
+        ch = getchar();
+    }
+
+	return 1;
+}
+
+
+int general_coding_file(char* input_filename, char* generic_compress_program_name, int removeFlag)
 {
     if (UTIL_isDirectory(input_filename))
     {
@@ -28,7 +46,7 @@ int general_coding_file(char* input_filename, char* generic_compress_program_nam
 	}
 
 	//
-	if (strstr(input_filename, ".flows_Record"))
+	if (removeFlag && strstr(input_filename, ".flows_Record"))
 	{
 		sprintf(cmd_buffer, "rm -f %s", input_filename);
 		system(cmd_buffer);	
@@ -57,7 +75,15 @@ int main(int argc , char* argv[])
 		return -1;
 	}
 
+	char* generic_compress_program_name = argv[3];
+	if (!UTIL_isRegularFile(generic_compress_program_name))
+	{
+		printf("%s does not exist!\n", generic_compress_program_name);
+		return -1;
+	}
 
+
+	int removeFlag = need_to_delete_original_file();
 	char input_filename[MAX_PATHNAME_LEN];
 	int i;
 	for (i = 0; i < column_count; i++)
@@ -65,7 +91,7 @@ int main(int argc , char* argv[])
 		sprintf(input_filename, "%s%.2d", argv[1], i);
 		if (UTIL_isRegularFile(input_filename))
 		{
-			if (general_coding_file(input_filename, argv[3]))
+			if (general_coding_file(input_filename, generic_compress_program_name, removeFlag))
 			{
 				printf("general_coding_file error!\n");
 				return -1;
