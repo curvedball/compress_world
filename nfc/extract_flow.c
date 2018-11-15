@@ -162,7 +162,7 @@ int parse_netflow_v9_data(char* in, int in_len, char* out, int* pout_len)
 		magic = ntohl(head_ptr->magic);
 		if (magic != UDP_V9_MAGIC && magic != UDP_V9_MAGIC2 && magic != UDP_V9_MAGIC3)
 		{
-			printf("Error! Invalid magic header! CurrentPos: %d magic: 0x%.8X\n", ptr - in, magic);
+			printf("Error! Invalid magic header! CurrentPos: %ld magic: 0x%.8X\n", ptr - in, magic);
 			return -1;
 		}
 
@@ -182,7 +182,7 @@ int parse_netflow_v9_data(char* in, int in_len, char* out, int* pout_len)
 		flow_count = ntohs(head_ptr->count);
 		if (flow_count != 22)
 		{
-			printf("Current Pos: %d\n", ptr - in);
+			printf("Current Pos: %ld\n", ptr - in);
 		}
 
 		//

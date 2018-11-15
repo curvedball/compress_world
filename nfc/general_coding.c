@@ -84,6 +84,9 @@ int main(int argc , char* argv[])
 
 
 	int removeFlag = need_to_delete_original_file();
+	printf("Delete Flag: %d\n", removeFlag);
+
+	//
 	char input_filename[MAX_PATHNAME_LEN];
 	int i;
 	for (i = 0; i < column_count; i++)

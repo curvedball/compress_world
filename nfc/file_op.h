@@ -18,6 +18,8 @@ int UTIL_readFile(FILE* fp, char* buffer, int size);
 int UTIL_writeFile(FILE* fp, char* buffer, int size);
 
 
+int UTIL_getCurrentWorkingDirectory(char* buffer, int size);
+
 
 #endif
 

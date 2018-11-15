@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <arpa/inet.h>
+#include <ctype.h>
 
 
 
@@ -42,8 +43,32 @@ typedef   int64_t S64;
 #define MAX_PATHNAME_LEN 256
 
 
+#ifndef BOOL
+#define BOOL BYTE
+#endif
+
+#ifndef bool
+#define bool BYTE
+#endif
 
 
+
+#ifndef TRUE
+#define TRUE 1
+#endif
+
+#ifndef true
+#define true 1
+#endif
+
+
+#ifndef FALSE
+#define FALSE 0
+#endif
+
+#ifndef false
+#define false 0
+#endif
 
 
 

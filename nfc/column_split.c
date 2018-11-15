@@ -255,7 +255,31 @@ int main(int argc , char* argv[])
 		int column_id = 0;
 		for (i = 0; i < V5_FIELD_NUM; i++)
 		{
+			sprintf(input_filename, "%s%.2d_r_delta", argv[1], i); //zb: higher previlege
+			if (UTIL_isRegularFile(input_filename))
+			{
+				if (extract_netflow_v5_field_column(input_filename, v5_field_width[i], argv[1], column_id))
+				{
+					printf("extract_netflow_v5_field_column error!\n");
+					return -1;
+				}
+				column_id += v5_field_width[i];
+				continue;
+			}
+
 			sprintf(input_filename, "%s%.2d_r", argv[1], i); //zb: higher previlege
+			if (UTIL_isRegularFile(input_filename))
+			{
+				if (extract_netflow_v5_field_column(input_filename, v5_field_width[i], argv[1], column_id))
+				{
+					printf("extract_netflow_v5_field_column error!\n");
+					return -1;
+				}
+				column_id += v5_field_width[i];
+				continue;
+			}
+
+			sprintf(input_filename, "%s%.2d_delta", argv[1], i); //zb: higher previlege
 			if (UTIL_isRegularFile(input_filename))
 			{
 				if (extract_netflow_v5_field_column(input_filename, v5_field_width[i], argv[1], column_id))
@@ -325,6 +349,18 @@ int main(int argc , char* argv[])
 		int column_id = 0;
 		for (i = 0; i < V9_FIELD_NUM; i++)
 		{
+			sprintf(input_filename, "%s%.2d_r_delta", argv[1], i); //zb: higher previlege
+			if (UTIL_isRegularFile(input_filename))
+			{
+				if (extract_netflow_v9_field_column(input_filename, v9_field_width[i], argv[1], column_id))
+				{
+					printf("extract_netflow_v9_field_column error!\n");
+					return -1;
+				}
+				column_id += v9_field_width[i];
+				continue;
+			}
+
 			sprintf(input_filename, "%s%.2d_r", argv[1], i); //zb: higher previlege
 			if (UTIL_isRegularFile(input_filename))
 			{
@@ -336,6 +372,18 @@ int main(int argc , char* argv[])
 				column_id += v9_field_width[i];
 				continue;
 			}
+
+			sprintf(input_filename, "%s%.2d_delta", argv[1], i); //zb: higher previlege
+			if (UTIL_isRegularFile(input_filename))
+			{
+				if (extract_netflow_v9_field_column(input_filename, v9_field_width[i], argv[1], column_id))
+				{
+					printf("extract_netflow_v9_field_column error!\n");
+					return -1;
+				}
+				column_id += v9_field_width[i];
+				continue;
+			}			
 
 			sprintf(input_filename, "%s%.2d", argv[1], i);
 			if (UTIL_isRegularFile(input_filename))

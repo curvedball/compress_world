@@ -182,4 +182,16 @@ int UTIL_writeFile(FILE* fp, char* buffer, int size)
 
 
 
+int UTIL_getCurrentWorkingDirectory(char* buffer, int size)
+{
+	if (NULL == getcwd(buffer, size))
+	{
+	    printf("***Error***get current working directory!\n");
+	    return -1;
+	}
+	printf("current directory: %s\n", buffer);
+	return 0;
+}
+
+
 

@@ -6,11 +6,10 @@
 
 #include "debug.h"
 #include "file_op.h"
-#include "netflow_v5.h"
 
 
 
-int delta_coding_column(char* input_filename, char* base_name, int column_id)
+int delta_coding_column(char* input_filename, int width)
 {
     if (UTIL_isDirectory(input_filename))
     {
@@ -28,7 +27,8 @@ int delta_coding_column(char* input_filename, char* base_name, int column_id)
 	int srcSize = UTIL_getFileSize(input_filename);
 	if (srcSize == 0)
 	{
-		return 0;
+		printf("Error! FileSize is %d!\n", srcSize);	
+		return -1;
 	}
 
 	//
@@ -44,8 +44,7 @@ int delta_coding_column(char* input_filename, char* base_name, int column_id)
 		return -1;
 	}
 
-
-	DbgPrint("delta_coding_column===input_filename: %s srcSize: %d\n", input_filename, srcSize);
+	DbgPrint("delta_coding===input_filename: %s srcSize: %d\n", input_filename, srcSize);
 
 
 	//============================================================
@@ -60,16 +59,81 @@ int delta_coding_column(char* input_filename, char* base_name, int column_id)
 	char* ptr_in = input_buffer;	
 	char* ptr_out = out_buffer;
 
-	*ptr_out = *ptr_in;
-	ptr_in++;
-	ptr_out++;	
-
-	while (ptr_in < ptr_in_end)
+	if (width == 1)
 	{
-		*ptr_out = *ptr_in - *(ptr_in - 1);
+		*ptr_out = *ptr_in;
 		ptr_in++;
-		ptr_out++;
+		ptr_out++;	
+
+		while (ptr_in < ptr_in_end)
+		{
+			*ptr_out = *ptr_in - *(ptr_in - 1);
+			ptr_in++;
+			ptr_out++;
+		}
 	}
+	else if (width == 2)
+	{
+		memcpy(ptr_out, ptr_in, 2);
+		ptr_in += 2;
+		ptr_out += 2;;	
+
+		while (ptr_in < ptr_in_end)
+		{
+			*ptr_out = *ptr_in - *(ptr_in - 2);
+			*(ptr_out + 1) = *(ptr_in + 1) - *(ptr_in - 1);
+
+			ptr_in += 2;
+			ptr_out += 2;
+		}		
+	}
+	else if (width == 4)
+	{
+		memcpy(ptr_out, ptr_in, 4);
+		ptr_in += 4;
+		ptr_out += 4;;	
+
+		while (ptr_in < ptr_in_end)
+		{
+			*ptr_out = *ptr_in - *(ptr_in - 4);
+			*(ptr_out + 1) = *(ptr_in + 1) - *(ptr_in - 3);
+			*(ptr_out + 2) = *(ptr_in + 2) - *(ptr_in - 2);
+			*(ptr_out + 3) = *(ptr_in + 3) - *(ptr_in - 1);
+
+			ptr_in += 4;
+			ptr_out += 4;
+		}
+	}
+	else if (width == 8)
+	{
+		memcpy(ptr_out, ptr_in, 8);
+		ptr_in += 8;
+		ptr_out += 8;;	
+
+		while (ptr_in < ptr_in_end)
+		{
+			*ptr_out = *ptr_in - *(ptr_in - 8);
+			*(ptr_out + 1) = *(ptr_in + 1) - *(ptr_in - 7);
+			*(ptr_out + 2) = *(ptr_in + 2) - *(ptr_in - 6);
+			*(ptr_out + 3) = *(ptr_in + 3) - *(ptr_in - 5);
+			
+			*(ptr_out + 4) = *(ptr_in + 4) - *(ptr_in - 4);
+			*(ptr_out + 5) = *(ptr_in + 5) - *(ptr_in - 3);
+			*(ptr_out + 6) = *(ptr_in + 6) - *(ptr_in - 2);
+			*(ptr_out + 7) = *(ptr_in + 7) - *(ptr_in - 1);	
+
+			ptr_in += 8;
+			ptr_out += 8;
+		}		
+	}
+	else
+	{
+		printf("Invalid width value! width: %d\n", width);
+		return -1;
+	}
+
+
+
 
 
 	//============================================================
@@ -79,7 +143,7 @@ int delta_coding_column(char* input_filename, char* base_name, int column_id)
 		printf("Allocate o_filename error!\n");
         return -1;
     }
-	sprintf(o_filename, "%s_delta%.2d", base_name, column_id);
+	sprintf(o_filename, "%s_delta", input_filename);
 	
 	FILE* dstFile = FIO_openDstFile(o_filename);
 	if (!dstFile)
@@ -108,37 +172,38 @@ int main(int argc , char* argv[])
 	DbgPrint("%s main begin.\n", argv[0]);
 	if (argc != 3)
 	{
-		printf("Usage: ./program input_filename column_count\n");
+		printf("Usage: ./program input_filename width(bytes)\n");
 		return -1;
 	}
 
 
-	int column_count = atoi(argv[2]);
-	if (column_count == 0)
+	int width = atoi(argv[2]);
+	if (width <= 0 || (width != 1 && width != 2 && width != 4 && width != 8))
 	{
-		printf("Convert column_count to int error! column_count: %s.\n", argv[2]);
+		printf("Invalid width! Width must be 1, 2, 4 or 8! width: %d.\n", width);
 		return -1;
 	}
 
 
 	char input_filename[MAX_PATHNAME_LEN];
-	int i;
-	for (i = 0; i < column_count; i++)
+	sprintf(input_filename, "%s", argv[1]);
+	if (UTIL_isRegularFile(input_filename))
 	{
-		sprintf(input_filename, "%s%.2d", argv[1], i);
-		if (UTIL_isRegularFile(input_filename))
+		if (delta_coding_column(input_filename, width))
 		{
-			if (delta_coding_column(input_filename, argv[1], i))
-			{
-				printf("delta_coding_column error!\n");
-				return -1;
-			}
+			printf("delta_coding_column error!\n");
+			return -1;
 		}
 	}
+
 
 	DbgPrint("%s main end.\n", argv[0]);
 	return 0;
 }
+
+
+
+
 
 
 

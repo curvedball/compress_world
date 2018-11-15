@@ -18,7 +18,7 @@
 
 
 
-all: extract_flow extract_field reverse_coding column_split delta_coding manual_delta_coding deltaofdelta_coding rle_coding general_coding calculate_size merge_file
+all: extract_flow extract_field reverse_coding column_split delta_coding manual_delta_coding deltaofdelta_coding rle_coding general_coding calculate_size merge_file nfc
 
 
 
@@ -78,9 +78,14 @@ merge_file: merge_file.o debug.o file_op.o
 	gcc $^ -o $@
 
 
+
+nfc: nfc.o debug.o file_op.o parse_config.o
+	gcc $^ -o $@
+
+
 clean:
 	rm -f *.o
-	rm -f extract_flow extract_field reverse_coding column_split delta_coding manual_delta_coding deltaofdelta_coding rle_coding general_coding calculate_size merge_file
+	rm -f extract_flow extract_field reverse_coding column_split delta_coding manual_delta_coding deltaofdelta_coding rle_coding general_coding calculate_size merge_file nfc
 
 
 
