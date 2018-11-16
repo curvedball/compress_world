@@ -18,6 +18,7 @@ int main(int argc , char* argv[])
 		return -1;
 	}
 
+	//===============================
 	int field_num = 0;	
 	FIELD_DESC field_desc[100];
 	if (ParseConfigFile(field_desc, &field_num))
@@ -26,6 +27,13 @@ int main(int argc , char* argv[])
 		return -1;	
 	}
 
+	//===============================
+	if (nfc_extract_field(argv[1], field_desc, field_num))
+	{
+		printf("nfc_extract_field error!\n");	
+		return -1;
+	}
+	
 	
 
 

@@ -69,7 +69,9 @@ int ParseConfigFile(FIELD_DESC* pfield_desc, int* pfield_num)
 			printf("pattribute is NULL!\n");
 			return -1;
 		}
-		printf("pattribute: %s len: %ld\n", pattribute, strlen(pattribute));
+
+		//
+		//printf("pattribute: %s len: %ld\n", pattribute, strlen(pattribute));
 		
 		if (strlen(pattribute) < 2) //zb: Invalid field name [at least 3 characters, e.g, tos]
 		{
@@ -132,6 +134,20 @@ int ParseConfigFile(FIELD_DESC* pfield_desc, int* pfield_num)
 	}
 	
 	return 0;
+}
+
+
+
+
+
+int GetCellLength(FIELD_DESC* pfield_desc, int field_num)
+{
+	int cell_length = 0;
+	for (int i = 0; i < field_num; i++)
+	{
+		cell_length += pfield_desc[i].width;
+	}
+	return cell_length;	
 }
 
 

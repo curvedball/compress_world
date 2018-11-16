@@ -25,37 +25,13 @@ typedef struct _V5_head
 	U16 reserved;
 } V5_head, *PV5_head;
 
+
 #define NETFLOW_V5_HEAD_LEN		(sizeof(V5_head))
 #define NETFLOW_V5_CELL_LEN		48
 
-/*
-typedef struct _V5_field
-{
-	U32 srcIp;
-	U32 dstIp;
-	U32 nexthop;
-	U16 inputSNMP;
-	U16 outputSNMP;
-	U32 inPkts;
-	U32 inBytes;
-
-	U32 firstSwitchID;
-	U32 lastWwitchID;
-	U16 srcPort;
-	U16 dstPort;
-
-	U16 pad1;
-	BYTE proto;
-	BYTE tos;
-	BYTE flags;
-	U16 pad2;
-	BYTE pad3;
-	U32 reserved;
-}V5_field, *PV5_field;
-*/
 
 /*
-nprobe: covert
+nprobe: covertion output
 
 IPV4_SRC_ADDR|IPV4_DST_ADDR|INPUT_SNMP|OUTPUT_SNMP|IN_PKTS|IN_BYTES|
 FIRST_SWITCHED|LAST_SWITCHED|L4_SRC_PORT|L4_DST_PORT|

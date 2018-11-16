@@ -8,6 +8,7 @@
 #include "file_op.h"
 #include "netflow_v5.h"
 #include "netflow_v9.h"
+#include "parse_config.h"
 
 
 int parse_netflow_v5_field_data(char* in, int in_len, char* out_buffer_table[], int* out_size_arr)
@@ -333,6 +334,89 @@ int main(int argc , char* argv[])
 	DbgPrint("%s main end.\n", argv[0]);
 	return 0;
 }
+
+
+int nfc_extract_field(char* input_filename, FIELD_DESC* pfield_desc, int field_num)
+{
+	FILE* srcFile;
+    int result;
+
+    if (UTIL_isDirectory(input_filename))
+    {
+        printf("%s is a directory--ignored!\n", input_filename);
+        return -1;
+    }
+
+    srcFile = FIO_openSrcFile(input_filename);
+    if (srcFile == NULL)
+    {
+        return -1;
+    }
+
+	//
+	int cell_length = GetCellLength(pfield_desc, field_num);
+	int srcSize = UTIL_getFileSize(input_filename);
+	if (srcSize < cell_length)
+	{
+		printf("Too small of this file! %s size: %d cell_length: %d\n", input_filename, srcSize, cell_length);
+		return -1;
+	}
+
+
+	char* input_buffer = malloc(srcSize);
+	if (!input_buffer)
+	{
+		printf("Allocate input_buffer memory error!\n");
+		return -1;
+	}
+		
+	if (UTIL_readFile(srcFile, input_buffer, srcSize) < 0)
+	{
+		return -1;
+	}
+
+	//
+	int nRecords = srcSize / cell_length;
+	char* output_buffer_table[V9_FIELD_NUM];
+	int output_buffer_table_size[V9_FIELD_NUM];
+	
+	int i;
+	char* ptr;
+	for (i = 0; i < V9_FIELD_NUM; i++)
+	{
+		ptr = malloc(nRecords * v9_field_width[i]);
+		if (!ptr)
+		{
+			printf("Allocate memory for ptr error!\n");
+			return -1;
+		}
+		output_buffer_table[i] = ptr;
+		output_buffer_table_size[i] = 0; //zb: init
+	}
+
+
+	if (parse_netflow_v9_field_data(input_buffer, srcSize, output_buffer_table, output_buffer_table_size))
+	{
+		printf("parse_netflow_v5_field_data error!\n");		
+		return -1;
+	}
+
+	FILE* dstFile;
+	for (i = 0; i < V9_FIELD_NUM; i++)
+	{
+		dstFile = FIO_openDstFile(output_filename_table[i]);
+		if (UTIL_writeFile(dstFile, output_buffer_table[i], output_buffer_table_size[i]))
+		{
+			return -1;
+		}
+		fclose(dstFile);
+	}
+
+	fclose(srcFile);
+		
+	return 0;
+}
+
 
 
 
