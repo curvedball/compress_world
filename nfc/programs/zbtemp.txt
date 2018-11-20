@@ -1,0 +1,261 @@
+
+./extract_flow a.flows
+
+===================================================
+
+./extract_field a.flows_Record 5
+./extract_field a.flows_Record 9
+
+===================================================
+
+./reverse_coding a.flows_Field05 a.flows_Field07 2
+./reverse_coding a.flows_Field06 a.flows_Field08 4
+
+===================================================
+
+./column_split 59.flows_Record_Field 5
+./column_split 59.flows_Record_Field 9
+
+===================================================
+./general_coding 59.flows_Record_Field_column 41 /usr/src/zstd_1.3.5/zstd
+
+===================================================
+./merge_file 02.flows_Record_Field_column 41 zst
+
+
+
+
+
+
+==============================================================================
+==============================================================================
+==============================================================================
+
+
+COMPILE_TARGET = tools
+
+.PHONY: default
+
+ifeq ($(strip $(COMPILE_TARGET)), "lib")
+default: lib-release
+else ifeq ($(strip $(COMPILE_TARGET)), "nfc")
+default: nfc-release
+else ifeq ($(strip $(COMPILE_TARGET)), "tools")
+default: tools-release
+else
+default: lib-release nfc-release
+endif
+
+
+
+
+#zstd_test: zstd_test.o zstd_api.o debug.o
+#	gcc -o $@ $^ ../lib/libzstd.a
+
+zstd_test: zstd_test.o zstd_api.o debug.o
+	gcc -o $@ $^ -L../lib -lzstd
+
+#zstd_test:
+#	gcc -o $@ zstd_test.c zstd_api.c debug.c ../lib/libzstd.a
+
+
+
+
+
+
+
+==============================================================================
+==============================================================================
+==============================================================================
+
+ZSTD_compressionParameters compressionParams;
+memset(&compressionParams, 0, sizeof(compressionParams));
+
+
+static int FIO_compressFilename_dstFile(cRess_t ress, const char* dstFileName
+, const char* srcFileName, int compressionLevel)
+
+{
+    int result;
+    stat_t statbuf;
+    int stat_result = 0;
+
+	DbgPrint("zb===FIO_compressFilename_dstFile===1.0===\n\n");
+
+    DISPLAYLEVEL(6, "FIO_compressFilename_dstFile: opening dst: %s", 
+dstFileName);
+
+    ress.dstFile = FIO_openDstFile(dstFileName);
+    if (ress.dstFile==NULL)
+    {
+        return 1;    /* could not open dstFileName */
+    }
+    /* Must ony be added after FIO_openDstFile() succeeds.
+     * Otherwise we may delete the destination file if at already exists, and
+     * the user presses Ctrl-C when asked if they wish to overwrite.
+     */
+    addHandler(dstFileName);
+
+    if (strcmp (srcFileName, stdinmark) && UTIL_getFileStat(srcFileName, &
+statbuf))
+
+    {
+		//DbgPrint("zb===FIO_compressFilename_dstFile===2.0===\n\n");
+        stat_result = 1;
+    }
+
+	//zb:
+    result = FIO_compressFilename_srcFile(ress, dstFileName, srcFileName, 
+compressionLevel); //zbzb
+
+
+	//DbgPrint("zb===FIO_compressFilename_dstFile===2.1===\n\n");
+
+	//
+    clearHandler();
+
+    if (fclose(ress.dstFile))   /* error closing dstFile */
+    {
+		//DbgPrint("zb===FIO_compressFilename_dstFile===2.2===\n\n");
+        DISPLAYLEVEL(1, "zstd: %s: %s \n", dstFileName, strerror(errno));
+        result=1;
+    }
+
+    if ( (result != 0) && strcmp(dstFileName, nulmark) && strcmp(dstFileName, 
+stdoutmark) ) 
+
+    {
+		//DbgPrint("zb===FIO_compressFilename_dstFile===3.0a===\n\n");
+        FIO_remove(dstFileName);    /* remove compression artefact; note don'
+t do anything special if remove() fails */
+
+    }
+    else if ( strcmp(dstFileName, stdoutmark) && strcmp(dstFileName, nulmark) 
+&& stat_result)
+
+    {
+		//
+		//DbgPrint("zb===FIO_compressFilename_dstFile===3.0b===\n\n");
+
+		//
+		//
+		//
+        UTIL_setFileStat(dstFileName, &statbuf); //zb: set the uid, gid, mode
+    }
+
+    return result;
+}
+
+
+
+
+
+
+        fCheck = fopen( dstFileName, "rb" );
+        if (fCheck != NULL)    /* dst file exists, authorization prompt */
+        {
+            fclose(fCheck);
+            if (!g_overwrite)
+            {
+                if (g_displayLevel <= 1)
+                {
+                    /* No interaction possible */
+                    DISPLAY("zstd: %s already exists; not overwritten  \n",
+                            dstFileName);
+                    return NULL;
+                }
+                DISPLAY("zstd: %s already exists; overwrite (y/N) ? ", 
+dstFileName);
+
+                {
+                    int ch = getchar();
+                    if ((ch!='Y') && (ch!='y'))
+                    {
+                        DISPLAY("    not overwritten  \n");
+                        return NULL;
+                    }
+                    /* flush rest of input line */
+                    while ((ch!=EOF) && (ch!='\n'))
+                    {
+                        ch = getchar();
+                    }
+                }
+            }
+            /* need to unlink */
+            FIO_remove(dstFileName);
+
+
+
+		int srcSize = UTIL_getFileSize(argv[1]);
+		if (srcSize % NETFLOW_V5_CELL_LEN != 0)
+		{
+			printf("File size %d is not 48 * n. Maybe not a regular netflow v5 file.\n", srcSize);
+			return -1;
+		}
+
+		char input_filename[MAX_PATHNAME_LEN];
+		char* output_filename_table[V5_FIELD_NUM];
+		memset(input_filename, 0, MAX_PATHNAME_LEN);
+		int len = strlen(argv[1]);
+		memcpy(input_filename, argv[1], len);
+		
+
+		int i;
+		char* ptr;
+		for (i = 0; i < V5_FIELD_NUM; i++)
+		{
+			ptr = malloc(MAX_PATHNAME_LEN);
+			if (!ptr)
+			{
+				printf("Allocate memory error!\n");
+				return -1;
+			}
+			output_filename_table[i] = ptr;
+			memset(ptr, 0, MAX_PATHNAME_LEN);
+			sprintf(ptr, "%s_Field%.2d", input_filename, i);
+		}
+
+
+		char current_absolute_path[MAX_SIZE];
+//\u83b7\u53d6\u5f53\u524d\u76ee\u5f55\u7edd\u5bf9\u8def\u5f84
+if (NULL == getcwd(current_absolute_path, MAX_SIZE))
+{
+    printf("***Error***\n");
+    exit(-1);
+}
+printf("current absolute path:%s\n", current_absolute_path);
+
+
+
+
+
+ char s[] = "ab-cd : ef;gh :i-jkl;mnop;qrs-tu: vwx-y;z";
+char *delim = "-: ";
+char *p;
+printf("%s ", strtok(s, delim));
+while((p = strtok(NULL, delim)))
+printf("%s ", p);
+printf("\n");
+
+
+	//int cell_length = GetCellLength(field_desc, field_num);
+
+
+
+       ZSTD_inBuffer inBuff = 
+		{ 
+			ress.srcBuffer, 
+			inSize, 
+			0 
+		};
+
+
+            ZSTD_outBuffer outBuff = 
+			{ 
+				ress.dstBuffer, 
+				ress.dstBufferSize, 
+				0 
+			};
+
+
+
