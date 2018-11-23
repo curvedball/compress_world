@@ -9,9 +9,8 @@
 
 #define UDP_V9_MAGIC 0x30383834
 
-
+//
 #pragma pack(1)
-
 
 typedef struct _V9_head
 {
@@ -50,6 +49,11 @@ typedef struct _V9_body
 }V9_body, *PV9_body;
 
 
+//zb: important! Cancel align mode!
+#pragma pack()
+
+
+
 #define NETFLOW_V9_CELL_LEN		sizeof(V9_body)
 
 
@@ -65,7 +69,7 @@ typedef struct _V9_body
 
 
 
-extern int v9_field_width[V9_FIELD_NUM];
+extern int v9_field_width[];
 
 
 

@@ -154,7 +154,7 @@ int UTIL_readFile(FILE* fp, char* buffer, int size)
 		
 	}
 
-    return 0;
+    return -1;
 }
 
 

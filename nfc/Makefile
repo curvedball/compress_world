@@ -11,7 +11,14 @@ EXT =
 
 
 .PHONY: default
-default: zstd-release
+#default: lib-release
+default: nfc-release
+#default: zstd-release
+#default: tools-release
+
+
+
+
 
 
 #=================================

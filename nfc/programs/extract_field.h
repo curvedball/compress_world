@@ -8,8 +8,6 @@
 
 #include "debug.h"
 #include "file_op.h"
-#include "netflow_v5.h"
-#include "netflow_v9.h"
 #include "parse_config.h"
 
 
@@ -25,6 +23,7 @@ int extract_netflow_v9_field(char* input_filename, char* output_filename_table[]
 
 
 int nfc_extract_field(char* input_filename, FIELD_DESC* pfield_desc, int field_num);
+
 
 
 #endif

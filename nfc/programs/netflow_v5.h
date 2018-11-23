@@ -9,6 +9,7 @@
 #define UDP_V5_MAGIC 0x31343634
 
 
+//
 #pragma pack(1)
 
 typedef struct _V5_head
@@ -65,8 +66,11 @@ typedef struct _V5_body
 }V5_body, *PV5_body;
 
 
+//zb: important! Cancel align mode!
+#pragma pack()
 
-extern int v5_field_width[V5_FIELD_NUM];
+
+extern int v5_field_width[];
 	
 
 #endif

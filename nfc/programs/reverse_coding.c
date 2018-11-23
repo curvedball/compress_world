@@ -2,16 +2,12 @@
 /*
 	reverse_coding.c
 */
-
-
-#include "debug.h"
-#include "file_op.h"
 #include "reverse_coding.h"
 
 
 int reverse_coding_netflow_field_u32(char* in1, char* in2, int nRecords, char* control_buffer, int* pcontrol_size, char* out1, char* out2, int* pout2_size)
 {
-	DbgPrint("reverse_coding_netflow_v5_field_u32=====nRecords: %d nBytes: %d\n", nRecords, nRecords * 4);
+	//DbgPrint("reverse_coding_netflow_field_u32=====nRecords: %d nBytes: %d\n", nRecords, nRecords * 4);
 	
 	U32 v1a, v1b, v2a, v2b;
 	U32* ptr1 = (U32*)in1;
@@ -70,14 +66,14 @@ int reverse_coding_netflow_field_u32(char* in1, char* in2, int nRecords, char* c
 	//
 	*pcontrol_size = nControlSize;
 	*pout2_size = nOutSize2;
-	DbgPrint("reverse_coding_netflow_v5_field_u32=====nControlSize: %d nOutSize1: %d nOutSize2: %d\n", nControlSize, nRecords * 4, nOutSize2);
+	DbgPrint("reverse_coding_netflow_field_u32=====nControlSize: %d nOutSize1: %d nOutSize2: %d\n", nControlSize, nRecords * 4, nOutSize2);
 
 	return 0;
 }
 
 int reverse_coding_netflow_field_u16(char* in1, char* in2, int nRecords, char* control_buffer, int* pcontrol_size, char* out1, char* out2, int* pout2_size)
 {
-	DbgPrint("reverse_coding_netflow_v5_field_u16=====nRecords: %d nBytes: %d\n", nRecords, nRecords * 2);
+	//DbgPrint("reverse_coding_netflow_field_u16=====nRecords: %d nBytes: %d\n", nRecords, nRecords * 2);
 	
 	U16 v1a, v1b, v2a, v2b;
 	U16* ptr1 = (U16*)in1;
@@ -136,7 +132,7 @@ int reverse_coding_netflow_field_u16(char* in1, char* in2, int nRecords, char* c
 	//
 	*pcontrol_size = nControlSize;
 	*pout2_size = nOutSize2;
-	DbgPrint("reverse_coding_netflow_v5_field_u16=====nControlSize: %d nOutSize1: %d nOutSize2: %d\n", nControlSize, nRecords * 2, nOutSize2);
+	DbgPrint("reverse_coding_netflow_field_u16=====nControlSize: %d nOutSize1: %d nOutSize2: %d\n", nControlSize, nRecords * 2, nOutSize2);
 
 	return 0;
 }
@@ -300,22 +296,78 @@ int reverse_coding_netflow_field_file(char* input_filename1, char* input_filenam
 
 
 
-int nfc_reverse_coding_field(FIELD_DESC* pfield_desc, int field_num)
+int nfc_reverse_coding(FIELD_DESC* pfield_desc, int field_num)
 {
-	int i;
+/*	
+	for (int i = 0; i < field_num; i++)
+	{
+		DbgPrint("nfc_reverse_coding===FieldDesc%.2d [name: %30s \twidth: %d \treverse_coding: %d \treverse_number: %d \tdelta_coding: %d]\n", i, pfield_desc[i].name, pfield_desc[i].width, pfield_desc[i].reverse_coding, pfield_desc[i].reverse_number, pfield_desc[i].delta_coding);
+	}
+*/		
+	//zb: find the appropriate fields
+	int i, j;
 	for (i = 0; i < field_num; i++)
 	{
-		if (pfield_desc[i].reverse_coding == TRUE && memcmp(pfield_desc[i].name, "srcPort", 7) == 0)
+		if (pfield_desc[i].reverse_coding == TRUE)
 		{
+			for (j = i + 1; j < field_num; j++)
+			{
+				if (pfield_desc[j].reverse_coding == TRUE && pfield_desc[j].reverse_number == pfield_desc[i].reverse_number)
+				{
+					if (pfield_desc[j].width != pfield_desc[i].width)
+					{
+						printf("Width does not match in reverse_coding! name: %s width: %d, name: %s width: %d\n", pfield_desc[i].name, pfield_desc[i].width, pfield_desc[j].name, pfield_desc[j].width);
+						return -1;
+					}
+					//printf("Find Match! i: %d j: %d\n", i, j);
+					pfield_desc[j].reverse_coding = FALSE;
+					if (nfc_reverse_coding_field(pfield_desc + i, pfield_desc + j))
+					{
+						return -1;
+					}
+					break;
+				}
+			}
 			
 		}
-		else if (pfield_desc[i].reverse_coding == TRUE && memcmp(pfield_desc[i].name, "srcIp", 7) == 0)
-		{
-		}
-		else
-		{
-		}
 	}
+	DbgPrint("\n");
+	return 0;
+}
+
+
+int nfc_reverse_coding_field(FIELD_DESC* pfield_desc1, FIELD_DESC* pfield_desc2)
+{
+	int nRecords = pfield_desc1->in_len / pfield_desc1->width;
+	char* control_buffer = malloc(nRecords);
+	if (control_buffer == NULL)
+	{
+		printf("Allocate control_buffer error!\n");
+		return -1;
+	}
+
+	int nControlSize;
+	int nOutSize;
+	if (pfield_desc1->width == 4)
+	{
+		reverse_coding_netflow_field_u32(pfield_desc1->in_ptr, pfield_desc2->in_ptr, nRecords, control_buffer, &nControlSize, pfield_desc1->in_ptr, pfield_desc2->in_ptr, &nOutSize);
+		pfield_desc1->control_ptr = control_buffer;
+		pfield_desc1->control_len = nControlSize;
+		pfield_desc2->in_len = nOutSize;
+	}
+	else if (pfield_desc1->width == 2)
+	{
+		reverse_coding_netflow_field_u16(pfield_desc1->in_ptr, pfield_desc2->in_ptr, nRecords, control_buffer, &nControlSize, pfield_desc1->in_ptr, pfield_desc2->in_ptr, &nOutSize);
+		pfield_desc1->control_ptr = control_buffer;
+		pfield_desc1->control_len = nControlSize;
+		pfield_desc2->in_len = nOutSize;
+	}
+	else
+	{
+		printf("Width %d is not supported in reverse_coding!\n", pfield_desc1->width);
+		return -1;	
+	}
+	
 	return 0;
 }
 

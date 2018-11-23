@@ -19,7 +19,9 @@ int reverse_coding_netflow_field_file(char* input_filename1, char* input_filenam
 
 
 //
-int nfc_reverse_coding_field(FIELD_DESC* pfield_desc, int field_num);
+int nfc_reverse_coding(FIELD_DESC* pfield_desc, int field_num);
+int nfc_reverse_coding_field(FIELD_DESC* pfield_desc1, FIELD_DESC* pfield_desc2);
+
 
 #endif
 

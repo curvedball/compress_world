@@ -16,6 +16,10 @@ int need_to_delete_original_file();
 int general_coding_file(char* input_filename, char* generic_compress_program_name, int removeFlag);
 
 
+//
+int nfc_general_coding(FIELD_DESC* pfield_desc, int field_num);
+int nfc_general_coding_field(FIELD_DESC* pfield_desc);
+int nfc_general_coding_column(COLUMN_DESC* pcol_desc, int column_id);
 
 
 

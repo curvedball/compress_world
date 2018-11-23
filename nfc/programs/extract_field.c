@@ -2,10 +2,9 @@
 /*
 	extract_field.c
 */
-
-
+#include "netflow_v5.h"
+#include "netflow_v9.h"
 #include "extract_field.h"
-
 
 
 int parse_netflow_v5_field_data(char* in, int in_len, char* out_buffer_table[], int* out_size_arr)
@@ -123,11 +122,6 @@ int extract_netflow_v5_field(char* input_filename, char* output_filename_table[]
 
 
 //-----------------------------------------------------------------------------
-
-
-
-
-
 int parse_netflow_v9_field_data(char* in, int in_len, char* out_buffer_table[], int* out_size_arr)
 {
 	DbgPrint("parse_netflow_v5_field_data==in_len: %d\n", in_len);
@@ -241,11 +235,11 @@ int extract_netflow_v9_field(char* input_filename, char* output_filename_table[]
 }
 
 
-
 int nfc_extract_field(char* input_filename, FIELD_DESC* pfield_desc, int field_num)
 {
 	FILE* srcFile;
     int result;
+	int i;
 
     if (UTIL_isDirectory(input_filename))
     {
@@ -274,7 +268,6 @@ int nfc_extract_field(char* input_filename, FIELD_DESC* pfield_desc, int field_n
 		return -1;		
 	}
 
-
 	char* input_buffer = malloc(srcSize);
 	if (!input_buffer)
 	{
@@ -286,11 +279,10 @@ int nfc_extract_field(char* input_filename, FIELD_DESC* pfield_desc, int field_n
 	{
 		return -1;
 	}
-
 	fclose(srcFile);
 
 
-	//=========================================================
+	//=======================
 	char* output_buffer = malloc(srcSize);
 	if (!output_buffer)
 	{
@@ -300,14 +292,17 @@ int nfc_extract_field(char* input_filename, FIELD_DESC* pfield_desc, int field_n
 
 	//
 	int nRecords = srcSize / cell_length;
-	pfield_desc[0].data_len = nRecords * pfield_desc[0].width;
-	pfield_desc[0].data_ptr = output_buffer;
-	int i;
+	pfield_desc[0].in_len = nRecords * pfield_desc[0].width;
+	pfield_desc[0].in_ptr = output_buffer;
+	pfield_desc[0].n_records = nRecords;
 	for (int i = 1; i < field_num; i++)
 	{
-		pfield_desc[i].data_len = nRecords * pfield_desc[i].width;
-		pfield_desc[i].data_ptr = pfield_desc[i - 1].data_ptr + pfield_desc[i - 1].data_len;
+		pfield_desc[i].in_len = nRecords * pfield_desc[i].width;
+		pfield_desc[i].in_ptr = pfield_desc[i - 1].in_ptr + pfield_desc[i - 1].in_len;
+		pfield_desc[i].n_records = nRecords;
 	}
+
+
 
 	char* ptr = input_buffer;
 	char* ptr_end = input_buffer + srcSize;
@@ -315,8 +310,8 @@ int nfc_extract_field(char* input_filename, FIELD_DESC* pfield_desc, int field_n
 	{
 		for (i = 0; i < field_num; i++)
 		{
-			memcpy(pfield_desc[i].data_ptr, ptr, pfield_desc[i].width);
-			pfield_desc[i].data_ptr += pfield_desc[i].width;
+			memcpy(pfield_desc[i].in_ptr, ptr, pfield_desc[i].width);
+			pfield_desc[i].in_ptr += pfield_desc[i].width;
 			ptr += pfield_desc[i].width;
 		}
 	}
@@ -324,11 +319,12 @@ int nfc_extract_field(char* input_filename, FIELD_DESC* pfield_desc, int field_n
 	//Reset the position of pointers to the start of each segment!
 	for (i = 0; i < field_num; i++)
 	{
-		pfield_desc[i].data_ptr -= pfield_desc[i].data_len;
+		pfield_desc[i].in_ptr -= pfield_desc[i].in_len;
 	}	
 
 	return 0;
 }
+
 
 
 

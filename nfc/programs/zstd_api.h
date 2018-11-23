@@ -96,6 +96,7 @@ typedef struct
     void*  in_buffer;
     size_t in_length;
     char*  in_cur_ptr;
+	size_t loaded; //zb: save the valid data len from the current pointer	
 	char*  in_ptr_end;
 
     void*  out_buffer;
@@ -141,6 +142,12 @@ int FIO_decompressReadData(char* buf, int len, DataBuffer_t* dataBuffer);
 int FIO_decompressWriteData(char* buf, int len, DataBuffer_t* dataBuffer);
 
 int FIO_decompressGzipData(dRess_t* ress, char* input_buffer, int input_len, char* output_buffer, int output_len, DataBuffer_t* dataBuffer);
+
+
+//===============================================
+int FIO_decompressDataNoCopy(dRess_t ress, char* input_buffer, int input_len, char* output_buffer, int output_len);
+int FIO_decompressZstdDataNoCopy(dRess_t* ress, DataBuffer_t* dataBuffer);
+int FIO_decompressGetData(int toRead, DataBuffer_t* dataBuffer);
 
 
 #endif

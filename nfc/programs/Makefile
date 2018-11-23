@@ -87,17 +87,23 @@ default: nfc-release
 
 #=======================================================================================
 .PHONY: nfc-release
-nfc-release: DEBUGFLAGS :=
+#nfc-release: DEBUGFLAGS :=
 nfc-release: nfc
+nfc: nfc.o debug.o file_op.o parse_config.o netflow_v5.o netflow_v9.o extract_flow.o extract_field.o reverse_coding.o delta_coding.o deltaofdelta_coding.o column_split.o rle_coding.o general_coding.o merge_data.o zstd_api.o
+	gcc -o $@ $^ ../lib/libzstd.a
 
 
-nfc : CPPFLAGS += $(ZLIBCPP)
-nfc : LDFLAGS += $(THREAD_LD) $(ZLIBLD) $(LZMALD) $(LZ4LD)
-nfc : CPPFLAGS +=
-nfc : $(ZSTDLIB_FILES) nfc.o debug.o file_op.o parse_config.o netflow_v5.o netflow_v9.o extract_flow.o extract_field.o reverse_coding.o delta_coding.o deltaofdelta_coding.o column_split.o rle_coding.o general_coding.o merge_data.o
-	@echo "$(THREAD_MSG)"
-	@echo "$(ZLIB_MSG)"
-	$(CC) $(FLAGS) $^ $(RES_FILE) -o $@$(EXT) $(LDFLAGS)
+
+#nfc : CPPFLAGS += $(ZLIBCPP)
+#nfc : LDFLAGS += $(THREAD_LD) $(ZLIBLD) $(LZMALD) $(LZ4LD)
+#nfc : CPPFLAGS +=
+#nfc : $(ZSTDLIB_FILES) nfc.o debug.o file_op.o parse_config.o netflow_v5.o netflow_v9.o extract_flow.o extract_field.o reverse_coding.o delta_coding.o deltaofdelta_coding.o column_split.o rle_coding.o general_coding.o merge_data.o
+	#@echo "$(THREAD_MSG)"
+	#@echo "$(ZLIB_MSG)"
+	#gcc -o $@ $^ ../lib/libzstd.a
+	#$(CC) $(FLAGS) $^ $(RES_FILE) -o $@$(EXT) $(LDFLAGS)
+
+
 
 $(ZSTDDECOMP_O): CFLAGS += $(ALIGN_LOOP)
 

@@ -16,6 +16,7 @@ int merge_input_file(char* input_filename, FILE* dstFile);
 
 
 
+int nfc_merge_data(char* input_filename, FIELD_DESC* pfield_desc, int field_num);
 
 
 

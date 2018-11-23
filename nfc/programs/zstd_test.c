@@ -108,7 +108,7 @@ int zstd_compress_decompress_small_data_test()
 	memset(&compressionParams, 0, sizeof(compressionParams));
     cRess_t ress = FIO_createCResources(NULL, ZSTDCLI_CLEVEL_DEFAULT, input_len, &compressionParams);
 	int compressedSize = FIO_compressData(ress, input_buffer, input_len, output_buffer, output_len, ZSTDCLI_CLEVEL_DEFAULT);
-
+	FIO_freeCResources(ress);
 	//
     double seconds = (double)(clock() - start) / CLOCKS_PER_SEC;
     printf("Compress completed in %.2f sec \n", seconds);
@@ -127,7 +127,8 @@ int zstd_compress_decompress_small_data_test()
 	start = clock();
 
 	dRess_t dRess = FIO_createDResources(NULL);
-	int decompressedSize = FIO_decompressData(dRess, output_buffer, compressedSize, output2_buffer, output2_len);
+	//int decompressedSize = FIO_decompressData(dRess, output_buffer, compressedSize, output2_buffer, output2_len);
+	int decompressedSize = FIO_decompressDataNoCopy(dRess, output_buffer, compressedSize, output2_buffer, output2_len);
 
 	//
     seconds = (double)(clock() - start) / CLOCKS_PER_SEC;
@@ -175,13 +176,12 @@ int zstd_compress_decompress_large_data_test()
 
 	//
 	clock_t start = clock();
-
 	//
 	ZSTD_compressionParameters compressionParams;
 	memset(&compressionParams, 0, sizeof(compressionParams));
     cRess_t ress = FIO_createCResources(NULL, ZSTDCLI_CLEVEL_DEFAULT, input_len, &compressionParams);
 	int compressedSize = FIO_compressData(ress, input_buffer, input_len, output_buffer, output_len, ZSTDCLI_CLEVEL_DEFAULT);
-
+	FIO_freeCResources(ress);
 	//
     double seconds = (double)(clock() - start) / CLOCKS_PER_SEC;
     printf("Compress completed in %.2f sec\n\n", seconds);
@@ -198,10 +198,10 @@ int zstd_compress_decompress_large_data_test()
 	memset(output2_buffer, 0, output2_len);
 
 	start = clock();
-
 	dRess_t dRess = FIO_createDResources(NULL);
-	int decompressedSize = FIO_decompressData(dRess, output_buffer, compressedSize, output2_buffer, output2_len);
-
+	//int decompressedSize = FIO_decompressData(dRess, output_buffer, compressedSize, output2_buffer, output2_len);
+	int decompressedSize = FIO_decompressDataNoCopy(dRess, output_buffer, compressedSize, output2_buffer, output2_len);
+	FIO_freeCResources(ress);
 	//
     seconds = (double)(clock() - start) / CLOCKS_PER_SEC;
     printf("Decompress completed in %.2f sec \n", seconds);
@@ -251,6 +251,7 @@ int zstd_compress_decompress_huge_data_test()
 		return -1;
 	}
 
+#if 0
 	//
 	int i;
 	for (i = 0; i < input_len; i++)
@@ -264,6 +265,26 @@ int zstd_compress_decompress_huge_data_test()
 			input_buffer[i] = (char)(i - i % 10);
 		}
 	}
+#else
+	//
+	int i;
+	for (i = 0; i < input_len; i++)
+	{
+		if (i % 5 == 0)
+		{
+			//input_buffer[i] = (char)i;
+			input_buffer[i] = i % 256;
+		}
+		else
+		{
+			input_buffer[i] = (char)i % 256;
+			//input_buffer[i] = (char)(i - i % 5);
+		}
+	}
+#endif
+
+
+
 
 	//
 	clock_t start = clock();
@@ -289,12 +310,12 @@ int zstd_compress_decompress_huge_data_test()
 	}
 	memset(output2_buffer, 0, output2_len);
 
+
 	start = clock();
-
 	dRess_t dRess = FIO_createDResources(NULL);
-	int decompressedSize = FIO_decompressData(dRess, output_buffer, compressedSize, output2_buffer, output2_len);
+	//int decompressedSize = FIO_decompressData(dRess, output_buffer, compressedSize, output2_buffer, output2_len);
+	int decompressedSize = FIO_decompressDataNoCopy(dRess, output_buffer, compressedSize, output2_buffer, output2_len);
 
-	//
     seconds = (double)(clock() - start) / CLOCKS_PER_SEC;
     printf("Decompress completed in %.2f sec \n", seconds);
 

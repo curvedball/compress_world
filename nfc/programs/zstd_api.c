@@ -619,9 +619,7 @@ int FIO_compressZstdData(cRess_t ress, char* input_buffer, int input_len, char* 
 			directive = ZSTD_e_end;
 		}
 
-
-		result = 1;
-		
+		result = 1;	
         ZSTD_inBuffer inBuff = 
 		{ 
 			cur_input_ptr, 
@@ -642,14 +640,11 @@ int FIO_compressZstdData(cRess_t ress, char* input_buffer, int input_len, char* 
             if (outBuff.pos)
             {
                 compressedfilesize += outBuff.pos;
-
-				//zb: 
 				cur_output_ptr += outBuff.pos;
 				cur_available_output_len -= outBuff.pos;
             }
         }
 
-		//zb:
 		cur_input_ptr += readSize;
 		
     }
@@ -814,6 +809,7 @@ int FIO_decompressZstdData(dRess_t* ress, char* input_buffer, int input_len, cha
 		//zb: Do this so that we can process the input buffer from the beginning!
         if (inBuff.pos > 0)
         {
+			//printf("zb===memmove====\n");
             memmove(ress->srcBuffer, (char*)ress->srcBuffer + inBuff.pos, inBuff.size - inBuff.pos); //zb?: too slow?
             ress->srcBufferLoaded -= inBuff.pos;
         }
@@ -910,6 +906,135 @@ int FIO_decompressGzipData(dRess_t* ress, char* input_buffer, int input_len, cha
 {
 	return 0;
 }
+
+
+
+
+int FIO_decompressDataNoCopy(dRess_t ress, char* input_buffer, int input_len, char* output_buffer, int output_len)
+{
+	U64 decompressedSize = 0;
+	unsigned long long frameSize;
+	size_t toRead;
+
+	
+	//
+	DataBuffer_t dataBuffer;
+	dataBuffer.in_buffer = input_buffer;
+	dataBuffer.in_length = input_len;
+	dataBuffer.in_cur_ptr = input_buffer;
+	dataBuffer.in_ptr_end = input_buffer + input_len;
+
+	//
+	dataBuffer.out_buffer = output_buffer;
+	dataBuffer.out_length = output_len;
+	dataBuffer.out_cur_ptr = output_buffer;
+	dataBuffer.out_ptr_end = output_buffer + output_len;
+	
+
+    for ( ; ; )
+    {
+        toRead = FIO_decompressGetData(4, &dataBuffer);
+		if (toRead == 0)
+		{
+			break;
+		}
+		dataBuffer.loaded += toRead;
+
+        if (ZSTD_isFrame(dataBuffer.in_cur_ptr, toRead))
+        {
+			frameSize = FIO_decompressZstdDataNoCopy(&ress, &dataBuffer);
+			if (frameSize < 0)
+			{
+				return -1;
+			}
+        }
+        else if (dataBuffer.in_cur_ptr[0] == 31 && dataBuffer.in_cur_ptr[1] == 139)     /* gz magic number */
+        {
+
+        }
+        else
+        {
+            printf("zstd: unsupported format!\n");
+            return -1;
+        }
+		decompressedSize += frameSize;
+    }
+
+    printf("          (%6llu => %6llu bytes) \n", (unsigned long long)input_len, (unsigned long long) decompressedSize);
+
+	return decompressedSize;
+}
+
+
+
+int FIO_decompressZstdDataNoCopy(dRess_t* ress, DataBuffer_t* dataBuffer)
+{
+	ZSTD_inBuffer inBuff;
+	ZSTD_outBuffer outBuff;
+	size_t toRead;
+	size_t readSizeHint;
+	U64 frameSize = 0;
+	
+	ZSTD_resetDStream(ress->dctx);
+
+	toRead = FIO_decompressGetData(ZSTD_FRAMEHEADERSIZE_MAX - dataBuffer->loaded, dataBuffer);
+	dataBuffer->loaded += toRead;
+
+	while (1)
+	{
+		inBuff.src = dataBuffer->in_cur_ptr;
+		inBuff.size = dataBuffer->loaded;
+		inBuff.pos = 0;
+
+		outBuff.dst = dataBuffer->out_cur_ptr;
+		outBuff.size = dataBuffer->out_ptr_end - dataBuffer->out_cur_ptr;
+		outBuff.pos = 0;
+			
+		readSizeHint = ZSTD_decompressStream(ress->dctx, &outBuff, &inBuff);
+		if (ZSTD_isError(readSizeHint))
+		{
+		    printf("Decoding error (36) : %s \n", ZSTD_getErrorName(readSizeHint));
+		    return FIO_ERROR_FRAME_DECODING;
+		}
+
+	    //FIO_decompressWriteData(ress->dstBuffer, outBuff.pos, dataBuffer);
+	    dataBuffer->out_cur_ptr += outBuff.pos;
+		frameSize += outBuff.pos;
+
+		if (inBuff.pos > 0)
+        {
+			dataBuffer->in_cur_ptr += inBuff.pos;
+			dataBuffer->loaded -= inBuff.pos;
+        }
+
+		if (readSizeHint == 0)
+        {
+            break;    /* end of frame */
+        }
+
+		toRead = FIO_decompressGetData(readSizeHint - dataBuffer->loaded, dataBuffer);
+		dataBuffer->loaded += toRead;
+	}	
+	return frameSize;
+}
+
+
+int FIO_decompressGetData(int toRead, DataBuffer_t* dataBuffer)
+{
+	if (dataBuffer->in_cur_ptr >= dataBuffer->in_ptr_end)
+	{
+		return 0;
+	}
+
+	if (dataBuffer->in_cur_ptr + toRead >= dataBuffer->in_ptr_end)
+	{
+		return dataBuffer->in_cur_ptr + toRead - dataBuffer->in_ptr_end;
+	}
+
+	return toRead;
+}
+
+
 
 
 

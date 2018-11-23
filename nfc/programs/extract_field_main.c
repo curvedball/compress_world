@@ -3,7 +3,8 @@
 	extract_field_main.c
 */
 
-
+#include "netflow_v5.h"
+#include "netflow_v9.h"
 #include "extract_field.h"
 
 

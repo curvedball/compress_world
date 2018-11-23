@@ -1,0 +1,24 @@
+        ZSTD_inBuffer  inBuff =
+		{ 
+			ress->srcBuffer, 
+			ress->srcBufferLoaded, 
+			0
+		};
+		
+        ZSTD_outBuffer outBuff= 
+		{ 
+			ress->dstBuffer, 
+			ress->dstBufferSize, 
+			0
+		};
+
+				inBuff.src = 
+				inBuff.size = 
+				inBuff.pos = 
+
+
+
+	char* in_cur_ptr = input_buffer;
+	char* in_end_ptr = input_buffer + input_len;
+	char* out_cur_ptr = output_buffer;
+	char* out_end_ptr = output_buffer + output_len;	

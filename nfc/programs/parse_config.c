@@ -38,10 +38,11 @@ int ParseConfigFile(FIELD_DESC* pfield_desc, int* pfield_num)
 	{
 		return -1;
 	}
-
 	printf("Configuration file [%s] exists!\n", config_file_path);
 
 	//
+	memset(pfield_desc, 0, sizeof(FIELD_DESC) * (*pfield_num));
+
 	
 	FILE* fp = fopen(config_file_path, "r");
 	if (fp == NULL)
@@ -54,17 +55,16 @@ int ParseConfigFile(FIELD_DESC* pfield_desc, int* pfield_num)
 	char buffer[256];
 	char* delim_attribute = " \t";
 	char* pattribute;
-	int i;
 	int field_num = 0;
 	char* temp;
-	
+	int i;
 	while (!feof(fp))
 	{
 		temp = fgets(buffer, 256, fp);
 		if (!temp)
 		{
-			printf("fgets return value is NULL!\n");
-			return -1;
+			//printf("fgets return value is NULL!\n");
+			break;
 		}
 		//printf("%s", buffer);
 
@@ -78,7 +78,6 @@ int ParseConfigFile(FIELD_DESC* pfield_desc, int* pfield_num)
 
 		//
 		//printf("pattribute: %s len: %ld\n", pattribute, strlen(pattribute));
-		
 		if (strlen(pattribute) < 2) //zb: Invalid field name [at least 3 characters, e.g, tos]
 		{
 			continue;
@@ -87,8 +86,6 @@ int ParseConfigFile(FIELD_DESC* pfield_desc, int* pfield_num)
 		//
 		i = 1;
 		strcpy(pcurrent_field_desc->name, pattribute);
-
-
 		while((pattribute = strtok(NULL, delim_attribute)))
 		{
 			i++;
@@ -104,13 +101,16 @@ int ParseConfigFile(FIELD_DESC* pfield_desc, int* pfield_num)
 			}
 			else
 			{
-				if (memcmp(pattribute, "r1", 2) == 0)
+				if (memcmp(pattribute, "r", 1) == 0 && strlen(pattribute) > 1)
 				{
+					int v = atoi(pattribute + 1);
+					if (v <= 0)
+					{
+						printf("Unknow attribute! Invalid reverse_number in %s\n", pattribute);
+						return -1;
+					}
 					pcurrent_field_desc->reverse_coding = TRUE;
-				}
-				else if (memcmp(pattribute, "r2", 2) == 0)
-				{
-					pcurrent_field_desc->reverse_coding = TRUE;
+					pcurrent_field_desc->reverse_number = v;
 				}
 				else if (memcmp(pattribute, "d", 1) == 0)
 				{
@@ -128,10 +128,13 @@ int ParseConfigFile(FIELD_DESC* pfield_desc, int* pfield_num)
 			}
 
 		}	
-
-		//
-		pcurrent_field_desc++;	
-		field_num++;	
+		
+		if (i > 1) //Ignore invalid field description(without width_parameter)
+		{
+			pcurrent_field_desc->id = field_num;
+			pcurrent_field_desc++;	
+			field_num++;
+		}
 	}
 
 	fclose(fp);
@@ -140,8 +143,9 @@ int ParseConfigFile(FIELD_DESC* pfield_desc, int* pfield_num)
 	//
 	for (i = 0; i < field_num; i++)
 	{
-		printf("FieldDescp%.2d [name: %s width: %d reverse_coding: %d delta_coding: %d]\n", i, pfield_desc[i].name, pfield_desc[i].width, pfield_desc[i].reverse_coding, pfield_desc[i].delta_coding);
+		DbgPrint("FieldDesc%.2d [name: %30s \twidth: %d \treverse_coding: %d \treverse_number: %d \tdelta_coding: %d]\n", i, pfield_desc[i].name, pfield_desc[i].width, pfield_desc[i].reverse_coding, pfield_desc[i].reverse_number, pfield_desc[i].delta_coding);
 	}
+	DbgPrint("\n");
 	
 	return 0;
 }
