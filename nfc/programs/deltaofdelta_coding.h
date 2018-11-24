@@ -15,5 +15,6 @@
 int deltaofdelta_coding(char* input_filename, char* base_name, int column_id);
 
 
+int nfc_deltaofdelta_decoding(FIELD_DESC* pfield_desc, int field_num);
 
 

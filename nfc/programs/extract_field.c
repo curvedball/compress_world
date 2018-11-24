@@ -327,5 +327,55 @@ int nfc_extract_field(char* input_filename, FIELD_DESC* pfield_desc, int field_n
 
 
 
+int nfc_restore_field(FIELD_DESC* pfield_desc, int field_num)
+{
+	for (int i = 0; i < field_num; i++)
+	{
+		if (nfc_restore_one_field(pfield_desc + i))
+		{
+			return -1;
+		}
+	}	
+	return 0;
+}
+
+int nfc_restore_one_field(FIELD_DESC* pfield_desc)
+{
+	int width = pfield_desc->width;
+	int nRecords = pfield_desc->n_records;
+	char* temp_buffer = malloc(nRecords * width);
+	if (temp_buffer == NULL)
+	{
+		printf("Allocate memory innfc_restore_one_field_func error!\n");
+		return -1;
+	}
+
+	char* ptr = temp_buffer;
+	COLUMN_DESC* pCol = &(pfield_desc->col_desc);
+	for (int i = 0; i < nRecords; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			*ptr++ = *pCol->out_ptr[j]++;
+		}
+	}
+	pfield_desc->in_ptr = temp_buffer; //zb: 
+	pfield_desc->in_len = nRecords;
+
+	//
+	pfield_desc->out_ptr = pfield_desc->in_ptr;
+	pfield_desc->out_len = nRecords;
+	DbgPrint("nfc_restore_one_field===field_id: %d width: %d out_len: %d\n", pfield_desc->id, width, pfield_desc->out_len);
+
+	//
+	if (pfield_desc->reverse_coding == TRUE && pfield_desc->reverse_master == TRUE)
+	{
+		pfield_desc->control_ptr = pCol->out_ptr[width];
+		pfield_desc->control_len = pCol->out_len[width];
+		DbgPrint("nfc_restore_one_field===field_id: %d width: %d control_len: %d\n", pfield_desc->id, width, pfield_desc->control_len);
+	}
+	return 0;
+}
+
 
 

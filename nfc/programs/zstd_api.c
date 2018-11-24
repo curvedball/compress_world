@@ -910,8 +910,13 @@ int FIO_decompressGzipData(dRess_t* ress, char* input_buffer, int input_len, cha
 
 
 
+
+
+
+//=======================================================================================
 int FIO_decompressDataNoCopy(dRess_t ress, char* input_buffer, int input_len, char* output_buffer, int output_len)
 {
+	unsigned readSomething = 0;	
 	U64 decompressedSize = 0;
 	unsigned long long frameSize;
 	size_t toRead;
@@ -938,7 +943,18 @@ int FIO_decompressDataNoCopy(dRess_t ress, char* input_buffer, int input_len, ch
 		{
 			break;
 		}
+		
 		dataBuffer.loaded += toRead;
+		if (dataBuffer.loaded == 0)
+        {
+            if (readSomething == 0)
+            {
+                printf("zstd: unexpected end!\n");
+                return -1;
+            }
+            break;
+        }
+		readSomething = 1;
 
         if (ZSTD_isFrame(dataBuffer.in_cur_ptr, toRead))
         {
@@ -993,7 +1009,7 @@ int FIO_decompressZstdDataNoCopy(dRess_t* ress, DataBuffer_t* dataBuffer)
 		readSizeHint = ZSTD_decompressStream(ress->dctx, &outBuff, &inBuff);
 		if (ZSTD_isError(readSizeHint))
 		{
-		    printf("Decoding error (36) : %s \n", ZSTD_getErrorName(readSizeHint));
+		    printf("Decoding error (36) : readSizeHint: %d %s \n", readSizeHint, ZSTD_getErrorName(readSizeHint));
 		    return FIO_ERROR_FRAME_DECODING;
 		}
 

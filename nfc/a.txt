@@ -22,3 +22,14 @@
 	char* in_end_ptr = input_buffer + input_len;
 	char* out_cur_ptr = output_buffer;
 	char* out_end_ptr = output_buffer + output_len;	
+
+
+	char* ptr1 = pfield_desc1->in_ptr;
+	int len1 = pfield_desc1->in_len;
+	char* pcontrol = pfield_desc1->control_ptr;
+	int n_control = pfield_desc1->control_len;
+	char* ptr2 = pfield_desc2->in_ptr;
+	int len2 = pfield_desc2->in_len;
+
+
+

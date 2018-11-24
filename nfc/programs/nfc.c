@@ -59,6 +59,50 @@ int nfc_compress(char* input_filename)
 
 int nfc_decompress(char* input_filename)
 {
+	int field_num = 0;	
+	FIELD_DESC field_desc[100];
+	if (nfc_parse_compressed_file(input_filename, field_desc, &field_num))
+	{
+		printf("nfc_parse_compressed_file error!\n");
+		return -1;	
+	}
+
+	if (nfc_general_decoding(field_desc, field_num))
+	{
+		printf("nfc_decompress_column error!\n");	
+		return -1;		
+	}
+
+	if (nfc_restore_field(field_desc, field_num))
+	{
+		printf("nfc_restore_field error!\n");
+		return -1;
+	}
+
+	if (nfc_delta_decoding(field_desc, field_num))
+	{
+		printf("nfc_delta_decoding_func error!\n");	
+		return -1;
+	}
+
+	if (nfc_deltaofdelta_decoding(field_desc, field_num))
+	{
+		printf("nfc_deltaofdelta_decoding_func error!\n");	
+		return -1;
+	}
+
+	if (nfc_reverse_decoding(field_desc, field_num))
+	{
+		printf("nfc_reverse_decoding error!\n");	
+		return -1;
+	}
+
+	if (nfc_restore_compressed_file(input_filename, field_desc, field_num))
+	{
+		printf("nfc_restore_compressed_file error!\n");	
+		return -1;		
+	}
+
 	return 0;
 }
 

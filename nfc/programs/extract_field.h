@@ -24,6 +24,8 @@ int extract_netflow_v9_field(char* input_filename, char* output_filename_table[]
 
 int nfc_extract_field(char* input_filename, FIELD_DESC* pfield_desc, int field_num);
 
+int nfc_restore_field(FIELD_DESC* pfield_desc, int field_num);
+int nfc_restore_one_field(FIELD_DESC* pfield_desc);
 
 
 #endif

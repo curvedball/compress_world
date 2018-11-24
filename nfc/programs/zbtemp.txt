@@ -148,7 +148,22 @@ t do anything special if remove() fails */
 
 
 
+	//for (j = 0; j < field_num; j++)
+	//for (j = 0; j < 10; j++)
+	//for (j = 0; j < 11; j++)
+	j = 10;
+	{
+		pcur_field_desc = pfield_desc + j;
+		DbgPrint("field_id: %d width: %d out_len: %d\n", pcur_field_desc->id, pcur_field_desc->width, pcur_field_desc->out_len);
+		memcpy(output, pcur_field_desc->out_ptr, pcur_field_desc->out_len * pcur_field_desc->width);
+		output_ptr += pcur_field_desc->out_len;
+	}
 
+/*
+	return 0;
+
+
+	
 
 
         fCheck = fopen( dstFileName, "rb" );
@@ -256,6 +271,74 @@ printf("\n");
 				ress.dstBufferSize, 
 				0 
 			};
+
+
+	FILE* fp = fopen(input_filename, "r");
+	if (fp == NULL)
+	{
+		printf("Open file error in nfc_decompress_func! [%s]\n", input_filename);
+		return -1;
+	}
+
+	FIELD_DESC* pcurrent_field_desc = pfield_desc;
+	char buffer[256];
+	char* delim_attribute = " \t";
+	char* pattribute;
+	int field_num = 0;
+	char* temp;
+	int i;
+	while (!feof(fp))
+	{
+		temp = fgets(buffer, 256, fp);
+		if (i > 1) //Ignore invalid field description(without width_parameter)
+		{
+			pcurrent_field_desc->id = field_num;
+			pcurrent_field_desc++;	
+			field_num++;
+		}
+	}
+
+	fclose(fp);
+	DbgPrint("\n");
+
+
+
+
+typedef struct _FIELD_DESC
+{
+	int id;
+	char name[30];
+	int width;
+	bool reverse_coding;
+	char reverse_number;
+	bool delta_coding;
+	bool deltaofdelta_coding;
+	bool rle_coding;
+	int n_records;
+
+	//
+	char* in_ptr;
+	int in_len;
+	char* control_ptr; //If reverse_coding is enabled, then control_bits are 
+saved in this buffer. Its width is always 1 byte.
+
+	int control_len;
+	char* out_ptr;
+	int out_len;
+
+	COLUMN_DESC col_desc;
+}FIELD_DESC, *PFIELD_DESC;
+
+
+
+	//DbgPrint("nfc_restore_one_field===field_id: %d width: %d out_len: %d\n", 
+pfield_desc->id, width, pfield_desc->out_len);
+
+	//char* buf= malloc(nRecords * width);
+	//memcpy(buf, pfield_desc->out_ptr, nRecords * width);
+
+
+
 
 
 

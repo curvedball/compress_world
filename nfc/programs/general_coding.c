@@ -122,4 +122,67 @@ int nfc_general_coding_column(COLUMN_DESC* pcol_desc, int column_id)
 }
 
 
+int nfc_general_decoding (FIELD_DESC* pfield_desc, int field_num)
+{
+	for (int i = 0; i < field_num; i++)
+	{
+		DbgPrint("Decompress===field_id: %2d width: %d column: %d\n", (pfield_desc + i)->id, (pfield_desc + i)->width, (pfield_desc + i)->col_desc.column_count);
+		if (nfc_general_decoding_field(pfield_desc + i))
+		{
+			return -1;
+		}
+	}
+	DbgPrint("\n");	
+	return 0;
+}
+
+
+int nfc_general_decoding_field(FIELD_DESC* pfield_desc)
+{
+	if (pfield_desc->col_desc.column_count > 9)
+	{
+		printf("Error in nfc_general_decoding_field_func! column_count: %d\n", pfield_desc->col_desc.column_count);
+		return -1;
+	}
+
+	for (int i = 0; i < pfield_desc->col_desc.column_count; i++)
+	{
+		if (nfc_general_decoding_column(pfield_desc->n_records, &(pfield_desc->col_desc), i))
+		{
+			printf("Error in nfc_general_decoding_column_func! field_id: %d column_id: %d\n", pfield_desc->id, i);
+			return -1;
+		}
+	}
+	return 0;
+}
+
+
+int nfc_general_decoding_column(int n_records, COLUMN_DESC* pcol_desc, int column_id)
+{
+	char* ptr =  malloc(n_records);
+	if (ptr == NULL)
+	{
+		printf("Allocate memory for ptr error in nfc_general_decoding_column_func! n_records: %d\n", n_records);
+		return -1;
+	}
+	pcol_desc->out_ptr[column_id] = ptr;
+	pcol_desc->out_len[column_id] = n_records;
+
+	dRess_t dRess = FIO_createDResources(NULL);
+	//
+	int decompressedSize = FIO_decompressDataNoCopy(dRess, pcol_desc->in_ptr[column_id], pcol_desc->in_len[column_id], ptr, n_records);
+	//int decompressedSize = FIO_decompressData(dRess, pcol_desc->in_ptr[column_id], pcol_desc->in_len[column_id], ptr, n_records);
+
+	//
+    FIO_freeDResources(dRess);
+	if (decompressedSize <= 0)
+	{
+		printf("Error in nfc_general_decoding_column_func! decompressedSize: %d\n", nfc_general_decoding_column);
+		return -1;
+	}
+	pcol_desc->out_len[column_id] = decompressedSize;
+	return 0;
+}
+
+
 

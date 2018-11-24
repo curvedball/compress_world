@@ -16,6 +16,10 @@ int delta_coding(char* input_filename, int width);
 
 
 
+int nfc_delta_decoding(FIELD_DESC* pfield_desc, int field_num);
+
+
+
 
 
 

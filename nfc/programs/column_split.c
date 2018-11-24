@@ -239,7 +239,7 @@ int nfc_split_one_field(FIELD_DESC* pfield_desc, int* pcur_column_id)
 {
 	int i;
 	int cur_column_id = *pcur_column_id;
-	int nColumnCount = pfield_desc->reverse_coding ? pfield_desc->width + 1 : pfield_desc->width;
+	int nColumnCount = (pfield_desc->reverse_coding && pfield_desc->reverse_master) ? pfield_desc->width + 1 : pfield_desc->width;
 	int nRecords = pfield_desc->in_len / pfield_desc->width;
 	pfield_desc->col_desc.column_count = nColumnCount;
 
@@ -298,6 +298,7 @@ int nfc_split_one_field(FIELD_DESC* pfield_desc, int* pcur_column_id)
 
 	return 0;
 }
+
 
 
 

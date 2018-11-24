@@ -23,3 +23,8 @@ int nfc_general_coding_column(COLUMN_DESC* pcol_desc, int column_id);
 
 
 
+int nfc_general_decoding(FIELD_DESC* pfield_desc, int field_num);
+int nfc_general_decoding_field(FIELD_DESC* pfield_desc);
+int nfc_general_decoding_column(int n_records, COLUMN_DESC* pcol_desc, int column_id);
+
+

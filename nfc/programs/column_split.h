@@ -18,3 +18,4 @@ int nfc_split_one_field(FIELD_DESC* pfield_desc, int* pcur_column_id);
 
 
 
+

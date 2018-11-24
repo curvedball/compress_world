@@ -26,8 +26,15 @@ typedef struct _FIELD_DESC
 	int id;
 	char name[30];
 	int width;
+
+	//
 	bool reverse_coding;
+	bool reverse_master;
 	char reverse_number;
+	char* control_ptr; //If reverse_coding is enabled, then control_bits are saved in this buffer. Its width is always 1 byte.
+	int control_len;
+
+	//
 	bool delta_coding;
 	bool deltaofdelta_coding;
 	bool rle_coding;
@@ -36,11 +43,10 @@ typedef struct _FIELD_DESC
 	//
 	char* in_ptr;
 	int in_len;
-	char* control_ptr; //If reverse_coding is enabled, then control_bits are saved in this buffer. Its width is always 1 byte.
-	int control_len;
 	char* out_ptr;
 	int out_len;
 
+	//
 	COLUMN_DESC col_desc;
 }FIELD_DESC, *PFIELD_DESC;
 
