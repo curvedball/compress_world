@@ -35,9 +35,16 @@ typedef struct _FIELD_DESC
 	int control_len;
 
 	//
-	bool delta_coding;
+	bool delta_coding; //expressed by user!
+	bool delta_check; //checked by the system!
+	char* delta_ptr;
+	int delta_len;
+	
+	
 	bool deltaofdelta_coding;
 	bool rle_coding;
+
+	//
 	int n_records;
 
 	//

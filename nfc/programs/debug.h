@@ -15,7 +15,7 @@
 
 
 
-#define DbgPrintSwitch 	1
+#define DbgPrintSwitch 	0
 
 
 #if DbgPrintSwitch

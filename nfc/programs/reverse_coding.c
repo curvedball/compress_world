@@ -7,13 +7,11 @@
 
 int reverse_coding_netflow_field_u32(char* in1, char* in2, int nRecords, char* control_buffer, int* pcontrol_size, char* out1, char* out2, int* pout2_size)
 {
-	//DbgPrint("reverse_coding_netflow_field_u16=====nRecords: %d nBytes: %d\n", nRecords, nRecords * 2);
-	
 	U32 v1a, v1b, v2a, v2b;
-	U32* ptr1 = (U16*)in1;
+	U32* ptr1 = (U32*)in1;
 	U32* ptr_end = ptr1 + nRecords;
-	U32* ptr2 = (U16*)in2;
-	U32* ptr_out2 = (U16*)out2;
+	U32* ptr2 = (U32*)in2;
+	U32* ptr_out2 = (U32*)out2;
 	U32 nOutSize2 = 0;
 
 	//
@@ -43,7 +41,7 @@ int reverse_coding_netflow_field_u32(char* in1, char* in2, int nRecords, char* c
 		else
 		{
 			*ptr_out2 = *ptr2;
-			nOutSize2 += 2; //zb: bytes len measure
+			nOutSize2 += 4; //zb?: bytes len measure
 			ptr1 += 1;
 			ptr2 += 1;
 			ptr_out2 += 1;
@@ -73,7 +71,7 @@ int reverse_coding_netflow_field_u32(char* in1, char* in2, int nRecords, char* c
 	//
 	*pcontrol_size = nControlSize;
 	*pout2_size = nOutSize2;
-	DbgPrint("reverse_coding_netflow_field_u32=====nControlSize: %d nOneBits: %d nZeroBits: %d\n", nControlSize, nOneBits, nZeroBits);
+	DbgPrint("reverse_coding_netflow_field_u32=====nControlSize: %d nOneBits: %d nZeroBits: %d nLength: %d nOutSize2: %d\n", nControlSize, nOneBits, nZeroBits, nRecords*4, nOutSize2);
 
 	return 0;
 
@@ -81,8 +79,6 @@ int reverse_coding_netflow_field_u32(char* in1, char* in2, int nRecords, char* c
 
 int reverse_coding_netflow_field_u16(char* in1, char* in2, int nRecords, char* control_buffer, int* pcontrol_size, char* out1, char* out2, int* pout2_size)
 {
-	//DbgPrint("reverse_coding_netflow_field_u16=====nRecords: %d nBytes: %d\n", nRecords, nRecords * 2);
-	
 	U16 v1a, v1b, v2a, v2b;
 	U16* ptr1 = (U16*)in1;
 	U16* ptr_end = ptr1 + nRecords;
@@ -147,7 +143,7 @@ int reverse_coding_netflow_field_u16(char* in1, char* in2, int nRecords, char* c
 	//
 	*pcontrol_size = nControlSize;
 	*pout2_size = nOutSize2;
-	DbgPrint("reverse_coding_netflow_field_u16=====nControlSize: %d nOneBits: %d nZeroBits: %d\n", nControlSize, nOneBits, nZeroBits);
+	DbgPrint("reverse_coding_netflow_field_u16=====nControlSize: %d nOneBits: %d nZeroBits: %d nLength: %d nOutSize2: %d\n", nControlSize, nOneBits, nZeroBits, nRecords*2, nOutSize2);
 
 	return 0;
 }
@@ -463,7 +459,7 @@ int nfc_reverse_decoding_field(FIELD_DESC* pfield_desc1, FIELD_DESC* pfield_desc
 		
 	}
 
-	//
+	//zb?
 	pfield_desc1->out_ptr = pfield_desc1->in_ptr;
 	pfield_desc1->out_len = pfield_desc1->in_len;
 	pfield_desc2->out_ptr = ptr;

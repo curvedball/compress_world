@@ -587,7 +587,7 @@ int FIO_compressData(cRess_t ress, char* input_buffer, int input_len, char* outp
             break;
     }
 
-    printf("%6.2f%%   (%6llu => %6llu bytes) \n", (double)compressedfilesize / (input_len + (!input_len)/*avoid div by zero*/) * 100, (unsigned long long)input_len, (unsigned long long) compressedfilesize);
+    DbgPrint("%6.2f%%   (%6llu => %6llu bytes) \n", (double)compressedfilesize / (input_len + (!input_len)/*avoid div by zero*/) * 100, (unsigned long long)input_len, (unsigned long long) compressedfilesize);
     return compressedfilesize;
 }
 
@@ -976,7 +976,7 @@ int FIO_decompressDataNoCopy(dRess_t ress, char* input_buffer, int input_len, ch
 		decompressedSize += frameSize;
     }
 
-    printf("          (%6llu => %6llu bytes) \n", (unsigned long long)input_len, (unsigned long long) decompressedSize);
+    DbgPrint("          (%6llu => %6llu bytes) \n", (unsigned long long)input_len, (unsigned long long) decompressedSize);
 
 	return decompressedSize;
 }

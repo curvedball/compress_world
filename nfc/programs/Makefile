@@ -146,13 +146,15 @@ rle_coding: rle_coding_main.o rle_coding.o debug.o file_op.o
 	gcc -o $@ $^
 
 
-general_coding: general_coding_main.o general_coding.o debug.o file_op.o
-	gcc -o $@ $^
+general_coding: general_coding_main.o general_coding.o debug.o file_op.o zstd_api.o
+	gcc -o $@ $^ ../lib/libzstd.a
 
 merge_data: merge_data_main.o merge_data.o debug.o file_op.o
 	gcc -o $@ $^	
 
 
+approximation_coding: approximation_coding_main.o approximation_coding.o debug.o file_op.o
+	gcc -o $@ $^
 
 
 #=======================================================================================

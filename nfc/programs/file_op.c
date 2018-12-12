@@ -204,7 +204,33 @@ int UTIL_getCurrentWorkingDirectory(char* buffer, int size)
 	    printf("***Error***get current working directory!\n");
 	    return -1;
 	}
-	printf("current directory: %s\n", buffer);
+	DbgPrint("current directory: %s\n", buffer);
+	return 0;
+}
+
+
+int UTIL_writeTempFile(char* buffer, int size)
+{
+	char* o_filename = malloc(MAX_PATHNAME_LEN);
+	if (o_filename == NULL)
+    {
+		printf("Allocate o_filename error!\n");
+        return -1;
+    }
+	sprintf(o_filename, "temp.txt");
+	FILE* dstFile = FIO_openDstFile(o_filename);
+	if (!dstFile)
+	{
+		printf("Open dstFile error!\n");
+    	return -1;
+	}
+
+	if (UTIL_writeFile(dstFile, buffer, size))
+	{
+		return -1;
+	}
+	fclose(dstFile);
+
 	return 0;
 }
 

@@ -3,7 +3,8 @@
 	general_coding_main.c
 */
 
-
+#include "netflow_v5.h"
+#include "netflow_v9.h"
 #include "general_coding.h"
 
 

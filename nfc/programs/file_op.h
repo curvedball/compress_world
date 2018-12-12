@@ -48,7 +48,7 @@ int UTIL_writeFile(FILE* fp, char* buffer, int size);
 
 
 int UTIL_getCurrentWorkingDirectory(char* buffer, int size);
-
+int UTIL_writeTempFile(char* buffer, int size);
 
 #endif
 

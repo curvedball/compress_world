@@ -8,6 +8,114 @@
 #include "column_split.h"
 
 
+int column_split_by_width(char* input_filename, int width)
+{
+    if (UTIL_isDirectory(input_filename))
+    {
+        printf("%s is a directory--ignored!\n", input_filename);
+        return -1;
+    }
+
+    FILE* srcFile = FIO_openSrcFile(input_filename);
+    if (srcFile == NULL)
+    {
+        return -1;
+    }
+
+	//
+	int srcSize = UTIL_getFileSize(input_filename);
+	if (srcSize == 0)
+	{
+		printf("Error! FileSize is %d!\n", srcSize);	
+		return -1;
+	}
+
+	//
+	char* input_buffer = malloc(srcSize);
+	if (!input_buffer)
+	{
+		printf("Allocate input_buffer memory error!\n");
+		return -1;
+	}
+		
+	if (UTIL_readFile(srcFile, input_buffer, srcSize) < 0)
+	{
+		return -1;
+	}
+	//
+	fclose(srcFile);
+	DbgPrint("column_split===input_filename: %s srcSize: %d\n", input_filename, srcSize);
+
+
+	//============================================================
+	if (width != 1 && srcSize % width != 0)
+	{
+		printf("column_split_by_width_func: srcSize is not n*width!\n");
+		return -1;
+	}
+
+	int nRecords = srcSize / width;
+	char* ptr_in_end = input_buffer + srcSize;
+	char* ptr_in = input_buffer;
+	char* ptr_out[16];
+
+	char* o_filename[16];
+	char* out_buffer[16];
+	int i;
+	for (i = 0; i < width; i++)
+	{
+		out_buffer[i] = malloc(nRecords);
+		if (out_buffer[i] == NULL)
+		{
+			printf("Allocate out_buffer[i] error!\n");
+        	return -1;
+		}
+		ptr_out[i] = out_buffer[i];
+
+		//
+		o_filename[i] = malloc(256);
+		if (o_filename[i] == NULL)
+		{
+			printf("Allocate o_filename[i] error!\n");
+        	return -1;
+		}
+		sprintf(o_filename[i], "%s_%d", input_filename, i);
+	}
+
+
+	while (ptr_in < ptr_in_end)
+	{
+		for (i = 0; i < width; i++)
+		{
+			*(ptr_out[i]) = *(ptr_in + i);
+			ptr_out[i]++;
+		}
+		ptr_in += width;
+	}
+
+
+	FILE* dstFile;
+	for (i = 0; i < width; i++)
+	{
+		dstFile = FIO_openDstFile(o_filename[i]);
+		if (!dstFile)
+		{
+			printf("column_split_by_width_func: open dstFile error!\n");
+	    	return -1;
+		}
+		
+		if (UTIL_writeFile(dstFile, out_buffer[i], nRecords))
+		{
+			return -1;
+		}
+		fclose(dstFile);
+	}
+
+	return 0;
+}
+
+
+
 
 int extract_netflow_v5_field_column(char* input_filename, int width, char* base_filename, int column_id)
 {
@@ -239,7 +347,7 @@ int nfc_split_one_field(FIELD_DESC* pfield_desc, int* pcur_column_id)
 {
 	int i;
 	int cur_column_id = *pcur_column_id;
-	int nColumnCount = (pfield_desc->reverse_coding && pfield_desc->reverse_master) ? pfield_desc->width + 1 : pfield_desc->width;
+	int nColumnCount = (pfield_desc->reverse_coding && pfield_desc->reverse_master) ? pfield_desc->width + 1 : pfield_desc->width; //zb?
 	int nRecords = pfield_desc->in_len / pfield_desc->width;
 	pfield_desc->col_desc.column_count = nColumnCount;
 

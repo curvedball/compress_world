@@ -1,0 +1,31 @@
+netflow v9格式 sample1
+
+59.flows_Record 59.flows_Record 59.flows_Record 59.flows_Record 59.flows_Record ==> a.flows_Record
+a.flows_Record a.flows_Record a.flows_Record a.flows_Record a.flows_Record ==> b.flows_Record
+b.flows_Record b.flows_Record b.flows_Record b.flows_Record b.flows_Record ==> c.flows_Record 大小为: 47940750 bytes
+c.flows_Record c.flows_Record c.flows_Record c.flows_Record c.flows_Record  ==> d.flows_Record 大小为: 239703750 bytes
+d.flows_Record d.flows_Record d.flows_Record d.flows_Record d.flows_Record  ==> e.flows_Record 大小为: 1198518750 bytes
+
+
+=====================================================================
+
+
+nfc压缩和解压测试: c.flows_Reord.nfc 
+Filesize: 47940750 Completed in 0.16 sec! Compress Speed: 2.17 Gbps
+Filesize: 47940750 Completed in 0.13 sec! Decompress Speed: 2.80 Gbps
+
+
+nfc压缩和解压测试: d.flows_Record
+Filesize: 239703750 Completed in 0.61 sec! Compress Speed: 2.92 Gbps
+Filesize: 239703750 Completed in 0.67 sec! Decompress Speed: 2.67 Gbps
+
+
+nfc压缩和解压测试: e.flows_Record
+Filesize: 1198518750 Completed in 3.04 sec! Compress Speed: 2.94 Gbps
+Filesize: 1198518750 Completed in 3.23 sec! Decompress Speed: 2.76 Gbps
+
+
+
+平均压缩速率：2.68Gbps
+平均解压速率：2.72Gbps
+

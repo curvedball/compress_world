@@ -124,7 +124,7 @@ int nfc_merge_data(char* input_filename, FIELD_DESC* pfield_desc, int field_num)
 		{
 			v |= FLAG_REVERSE_CODING;
 		}
-		if (pcur_field_desc->delta_coding)
+		if (pcur_field_desc->delta_coding && pcur_field_desc->delta_check)
 		{
 			v |= FLAG_DELTA_CODING;
 		}
@@ -299,11 +299,13 @@ int nfc_parse_compressed_file(char* input_filename, FIELD_DESC* pfield_desc, int
 
 		if (v & FLAG_DELTA_CODING)
 		{
-			pcur_field_desc->delta_coding= TRUE;
+			pcur_field_desc->delta_coding = TRUE;
+			pcur_field_desc->delta_check = TRUE;
+			
 		}		
 		if (v & FLAG_DELTAOFDELTA_CODING)
 		{
-			pcur_field_desc->deltaofdelta_coding= TRUE;
+			pcur_field_desc->deltaofdelta_coding = TRUE;
 		}	
 		if (v & FLAG_RLE_CODING)
 		{
@@ -436,7 +438,9 @@ int nfc_restore_compressed_file(char* input_filename, FIELD_DESC* pfield_desc, i
 	}
 
 	fclose(dstFile);
-	return 0;
+
+	int dstSize = UTIL_getFileSize(output_filename);
+	return dstSize;
 }
 
 

@@ -38,7 +38,7 @@ int ParseConfigFile(FIELD_DESC* pfield_desc, int* pfield_num)
 	{
 		return -1;
 	}
-	printf("Configuration file [%s] exists!\n", config_file_path);
+	DbgPrint("Configuration file [%s] exists!\n", config_file_path);
 
 	//
 	memset(pfield_desc, 0, sizeof(FIELD_DESC) * (*pfield_num));
@@ -119,6 +119,10 @@ int ParseConfigFile(FIELD_DESC* pfield_desc, int* pfield_num)
 				else if (memcmp(pattribute, "dod", 3) == 0)
 				{
 					pcurrent_field_desc->deltaofdelta_coding = TRUE;
+				}
+				else if (memcmp(pattribute, "R", 1) == 0)
+				{
+					pcurrent_field_desc->rle_coding = TRUE;
 				}
 				else
 				{

@@ -322,7 +322,7 @@ int nfc_extract_field(char* input_filename, FIELD_DESC* pfield_desc, int field_n
 		pfield_desc[i].in_ptr -= pfield_desc[i].in_len;
 	}	
 
-	return 0;
+	return srcSize;
 }
 
 
@@ -370,7 +370,7 @@ int nfc_restore_one_field(FIELD_DESC* pfield_desc)
 	//
 	if (pfield_desc->reverse_coding == TRUE && pfield_desc->reverse_master == TRUE)
 	{
-		pfield_desc->control_ptr = pCol->out_ptr[width];
+		pfield_desc->control_ptr = pCol->out_ptr[width]; //zb?
 		pfield_desc->control_len = pCol->out_len[width];
 		DbgPrint("nfc_restore_one_field===field_id: %d width: %d control_len: %d\n", pfield_desc->id, width, pfield_desc->control_len);
 	}
