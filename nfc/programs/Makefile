@@ -90,7 +90,7 @@ default: nfc-release
 #nfc-release: DEBUGFLAGS :=
 nfc-release: nfc
 nfc: nfc.o debug.o file_op.o parse_config.o netflow_v5.o netflow_v9.o extract_flow.o extract_field.o reverse_coding.o delta_coding.o deltaofdelta_coding.o column_split.o rle_coding.o general_coding.o merge_data.o zstd_api.o
-	gcc -o $@ $^ ../lib/libzstd.a
+	gcc -o $@ $^ ../lib/libzstd.a -lm
 
 
 
