@@ -25,6 +25,7 @@
 #include "zstd_lazy.h"
 #include "zstd_opt.h"
 #include "zstd_ldm.h"
+#include <stdio.h>
 
 
 /*-*************************************
@@ -1641,6 +1642,16 @@ static int ZSTD_DeltaCodingLiterals(const void* src, size_t srcSize)
 	if (entropy1 > entropy2)
 	{
 		//printf("ZSTD_DeltaCodingLiterals_func: DeltaCoding the literals! srcSize: %d entropy1: %.2f entropy2: %.2f\n", srcSize, entropy1, entropy2);
+		FILE* fp = fopen("out.dat", "a"); //zbdelta
+		if (!fp)
+		{
+			printf("Open or create out file error!\n");
+			return -1;
+		}
+		fseek(fp, 0, SEEK_END);
+		fwrite(src, 1, srcSize, fp);
+		fwrite("\n\n\n\n\n\n\n\n\n\n", 1, 10, fp);
+		fclose(fp);
 		ptr = (char*)src;
 		ptr_end = (char*)src + srcSize;
 		ptr_buf = buffer;
